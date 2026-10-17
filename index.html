@@ -3,270 +3,397 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WoW Karaktärsväljare</title>
+    <title>WoW Character Poll</title>
     <style>
+        :root {
+            --bg-color: #313338;
+            --container-bg: #2b2d31;
+            --text-color: #dbdee1;
+            --text-muted: #949ba4;
+            --alliance-blue: #0078ff;
+            --horde-red: #c82222;
+            --button-bg: #4e5058;
+            --button-hover: #6d6f78;
+            --border-color: #1e1f22;
+        }
+
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #121212;
-            color: #e0e0e0;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
             display: flex;
             justify-content: center;
             align-items: center;
-            min-height: 100vh;
-            margin: 0;
-            padding: 20px;
-            box-sizing: border-box;
+            min-height: 90vh;
         }
-        .container {
-            background-color: #1e1e1e;
+
+        .poll-container {
+            background-color: var(--container-bg);
+            border-radius: 8px;
             padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.5);
-            max-width: 500px;
             width: 100%;
+            max-width: 500px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
             text-align: center;
-            border: 1px solid #333;
         }
-        h1 {
-            color: #fff;
-            margin-bottom: 24px;
+
+        h2 {
+            margin-top: 0;
             font-size: 24px;
+            color: #fff;
+            margin-bottom: 25px;
         }
+
         .step {
             display: none;
         }
+
         .step.active {
             display: block;
         }
-        .btn-group {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            margin-top: 20px;
+
+        .grid-options {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 20px;
         }
-        button {
-            padding: 14px 20px;
+
+        .grid-options.single-col {
+            grid-template-columns: 1fr;
+        }
+
+        .option-btn {
+            background-color: var(--button-bg);
+            color: #fff;
+            border: 2px solid transparent;
+            border-radius: 6px;
+            padding: 15px;
             font-size: 16px;
             font-weight: 600;
-            border: none;
-            border-radius: 6px;
             cursor: pointer;
             transition: all 0.2s ease;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
         }
-        .btn-alliance {
-            background-color: #004481;
-            color: #fff;
+
+        .option-btn:hover {
+            background-color: var(--button-hover);
         }
-        .btn-alliance:hover {
-            background-color: #005fa3;
+
+        .option-btn img {
+            width: 50px;
+            height: 50px;
+            object-fit: cover;
+            border-radius: 4px;
+            border: 1px solid rgba(255,255,255,0.1);
         }
-        .btn-horde {
-            background-color: #8c1616;
-            color: #fff;
+
+        .faction-alliance {
+            border-color: var(--alliance-blue);
+            background-color: rgba(0, 120, 255, 0.1);
         }
-        .btn-horde:hover {
-            background-color: #b31c1c;
+        .faction-alliance:hover {
+            background-color: rgba(0, 120, 255, 0.2);
         }
-        .btn-option {
-            background-color: #333;
-            color: #fff;
-            text-align: left;
-            padding-left: 20px;
+
+        .faction-horde {
+            border-color: var(--horde-red);
+            background-color: rgba(200, 34, 34, 0.1);
         }
-        .btn-option:hover {
-            background-color: #444;
-            border-left: 4px solid #f3d231;
+        .faction-horde:hover {
+            background-color: rgba(200, 34, 34, 0.2);
         }
-        .btn-back {
-            background-color: transparent;
-            color: #aaa;
-            border: 1px solid #444;
-            margin-top: 15px;
+
+        .nav-buttons {
+            margin-top: 25px;
+            display: flex;
+            justify-content: flex-start;
+        }
+
+        .back-btn {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
             font-size: 14px;
-            padding: 8px 16px;
+            text-decoration: underline;
         }
-        .btn-back:hover {
+        .back-btn:hover {
             color: #fff;
-            background-color: #222;
         }
-        .summary-box {
-            background-color: #252525;
-            padding: 15px;
-            border-radius: 6px;
+
+        /* Result Styles */
+        .result-card {
+            border: 2px solid var(--border-color);
+            background-color: #1e1f22;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .result-images {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
             margin: 20px 0;
-            text-align: left;
-            border-left: 4px solid #4caf50;
+            flex-wrap: wrap;
         }
-        .summary-item {
-            margin: 5px 0;
+
+        .result-img-box {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .result-img-box img {
+            width: 70px;
+            height: 70px;
+            object-fit: cover;
+            border-radius: 6px;
+            border: 2px solid var(--button-bg);
+        }
+
+        .result-img-box img.faction-logo-img {
+            width: 90px;
+            height: 90px;
+            object-fit: contain;
+            border: none;
+        }
+
+        .copy-btn {
+            background-color: #248046;
+            color: white;
+            border: none;
+            padding: 12px 24px;
             font-size: 16px;
-        }
-        .summary-label {
-            color: #888;
-        }
-        .summary-value {
             font-weight: bold;
-            color: #fff;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 100%;
+            transition: background 0.2s;
+        }
+
+        .copy-btn:hover {
+            background-color: #1a6535;
+        }
+
+        .success-msg {
+            color: #23a55a;
+            font-size: 14px;
+            margin-top: 10px;
+            display: none;
         }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <!-- STEG 1: Fraktion -->
+<div class="poll-container">
+    <!-- STEG 1: FACTION -->
     <div id="step-faction" class="step active">
-        <h1>Välj din fraktion</h1>
-        <div class="btn-group">
-            <button class="btn-alliance" onclick="selectFaction('Alliance')">Alliance</button>
-            <button class="btn-horde" onclick="selectFaction('Horde')">Horde</button>
+        <h2>Välj din Faction</h2>
+        <div class="grid-options single-col">
+            <button class="option-btn faction-alliance" onclick="selectFaction('Alliance')">
+                <img src="https://ibb.co" alt="Alliance" class="faction-logo-img">
+                Alliance
+            </button>
+            <button class="option-btn faction-horde" onclick="selectFaction('Horde')">
+                <img src="https://ibb.co" alt="Horde" class="faction-logo-img">
+                Horde
+            </button>
         </div>
     </div>
 
-    <!-- STEG 2: Ras -->
+    <!-- STEG 2: RACE -->
     <div id="step-race" class="step">
-        <h1>Välj din ras</h1>
-        <div class="btn-group" id="race-options"></div>
-        <button class="btn-back" onclick="goBack('faction')">Bakåt</button>
-    </div>
-
-    <!-- STEG 3: Klass -->
-    <div id="step-class" class="step">
-        <h1>Välj din klass</h1>
-        <div class="btn-group" id="class-options"></div>
-        <button class="btn-back" onclick="goBack('race')">Bakåt</button>
-    </div>
-
-    <!-- STEG 4: Spec -->
-    <div id="step-spec" class="step">
-        <h1>Välj din inriktning (Spec)</h1>
-        <div class="btn-group" id="spec-options"></div>
-        <button class="btn-back" onclick="goBack('class')">Bakåt</button>
-    </div>
-
-    <!-- STEG 5: Slutresultat -->
-    <div id="step-result" class="step">
-        <h1>Valet är registrerat!</h1>
-        <div class="summary-box">
-            <div class="summary-item"><span class="summary-label">Fraktion:</span> <span class="summary-value" id="res-faction"></span></div>
-            <div class="summary-item"><span class="summary-label">Ras:</span> <span class="summary-value" id="res-race"></span></div>
-            <div class="summary-item"><span class="summary-label">Klass:</span> <span class="summary-value" id="res-class"></span></div>
-            <div class="summary-item"><span class="summary-label">Spec:</span> <span class="summary-value" id="res-spec"></span></div>
+        <h2>Välj din Ras</h2>
+        <div id="race-options" class="grid-options"></div>
+        <div class="nav-buttons">
+            <button class="back-btn" onclick="goBack('faction')">← Gå tillbaka</button>
         </div>
-        <button class="btn-option" style="text-align:center;" onclick="restart()">Gör en ny omröstning</button>
+    </div>
+
+    <!-- STEG 3: CLASS -->
+    <div id="step-class" class="step">
+        <h2>Välj din Klass</h2>
+        <div id="class-options" class="grid-options"></div>
+        <div class="nav-buttons">
+            <button class="back-btn" onclick="goBack('race')">← Gå tillbaka</button>
+        </div>
+    </div>
+
+    <!-- STEG 4: RESULTAT -->
+    <div id="step-result" class="step">
+        <h2>Ditt val är klart!</h2>
+        <div class="result-card" id="result-card-box">
+            <div id="result-text" style="font-size: 18px; font-weight: bold; margin-bottom: 15px;"></div>
+            
+            <div class="result-images">
+                <div class="result-img-box">
+                    <img id="res-img-faction" class="faction-logo-img" src="" alt="Faction">
+                    <span>Faction</span>
+                </div>
+                <div class="result-img-box">
+                    <img id="res-img-race" src="" alt="Race">
+                    <span>Ras</span>
+                </div>
+                <div class="result-img-box">
+                    <img id="res-img-class" src="" alt="Class">
+                    <span>Klass</span>
+                </div>
+            </div>
+        </div>
+        
+        <button class="copy-btn" onclick="copyToDiscord()">Kopiera till Discord</button>
+        <div class="success-msg" id="success-text">Kopierat! Klistra in i Discord med Ctrl+V</div>
+        
+        <div class="nav-buttons">
+            <button class="back-btn" onclick="resetPoll()">Börja om →</button>
+        </div>
     </div>
 </div>
 
 <script>
-    const data = {
-        races: {
-            'Alliance': ['Human', 'Dwarf', 'Night Elf', 'Gnome', 'Draenei', 'Worgen', 'Pandaren', 'Void Elf', 'Lightforged Draenei', 'Dark Iron Dwarf', 'Kul Tiran', 'Mechagnome', 'Earthen'],
-            'Horde': ['Orc', 'Undead', 'Tauren', 'Troll', 'Blood Elf', 'Goblin', 'Pandaren', 'Nightborne', 'Highmountain Tauren', 'Mag'har Orc', 'Zandalari Troll', 'Vulpera', 'Earthen']
+    // Globalt valda värden
+    let selectedFaction = '';
+    let selectedRace = '';
+    let selectedClass = '';
+
+    // Bild-mappningar baserade på dina skärmdumpar
+    const images = {
+        faction: {
+            'Alliance': 'https://ibb.co',
+            'Horde': 'https://ibb.co'
         },
-        classes: ['Warrior', 'Paladin', 'Hunter', 'Rogue', 'Priest', 'Death Knight', 'Shaman', 'Mage', 'Warlock', 'Monk', 'Druid', 'Demon Hunter', 'Evoker'],
-        specs: {
-            'Warrior': ['Arms', 'Fury', 'Protection'],
-            'Paladin': ['Holy', 'Protection', 'Retribution'],
-            'Hunter': ['Beast Mastery', 'Marksmanship', 'Survival'],
-            'Rogue': ['Assassination', 'Outlaw', 'Subtlety'],
-            'Priest': ['Discipline', 'Holy', 'Shadow'],
-            'Death Knight': ['Blood', 'Frost', 'Unholy'],
-            'Shaman': ['Elemental', 'Enhancement', 'Restoration'],
-            'Mage': ['Arcane', 'Fire', 'Frost'],
-            'Warlock': ['Affliction', 'Demonology', 'Destruction'],
-            'Monk': ['Brewmaster', 'Mistweaver', 'Windwalker'],
-            'Druid': ['Balance', 'Feral', 'Guardian', 'Restoration'],
-            'Demon Hunter': ['Havoc', 'Vengeance'],
-            'Evoker': ['Devastation', 'Preservation', 'Augmentation']
+        race: {
+            'Human': 'https://ibb.co', // Rad 1
+            'Dwarf': 'https://ibb.co', // Rad 2 (hanteras via CSS sprites eller hela bilden som bas)
+            'Night Elf': 'https://ibb.co', // Rad 3
+            'Gnome': 'https://ibb.co', // Rad 4
+            'High Order Skyborne': 'https://ibb.co', // Rad 5
+            
+            'Orc': 'https://ibb.co', // Rad 1
+            'Undead': 'https://ibb.co', // Rad 2
+            'Tauren': 'https://ibb.co', // Rad 3
+            'Troll': 'https://ibb.co', // Rad 4
+            'Windshaper Skyborne': 'https://ibb.co' // Rad 5
+        },
+        classes: {
+            'Warrior': 'https://ibb.co', // Svärd
+            'Hunter': 'https://ibb.co', // Båge
+            'Mage': 'https://ibb.co', // Kristallstav
+            'Rogue': 'https://ibb.co', // Dolkar
+            'Priest': 'https://ibb.co', // Ankh/Korsstav
+            'Warlock': 'https://ibb.co', // Lila tentakler
+            'Paladin': 'https://ibb.co', // Hammare
+            'Druid': 'https://ibb.co', // Björntass
+            'Shaman': 'https://ibb.co' // Röd mask
         }
     };
 
-    let selection = {
-        faction: '',
-        race: '',
-        class: '',
-        spec: ''
-    };
-
-    function showStep(stepId) {
-        document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
-        document.getElementById('step-' + stepId).classList.add('active');
-    }
-
-    function selectFaction(faction) {
-        selection.faction = faction;
-        
-        const raceOptions = document.getElementById('race-options');
-        raceOptions.innerHTML = '';
-        
-        data.races[faction].forEach(race => {
-            const btn = document.createElement('button');
-            btn.className = 'btn-option';
-            btn.innerText = race;
-            btn.onclick = () => selectRace(race);
-            raceOptions.appendChild(btn);
-        });
-        
-        showStep('race');
-    }
-
-    function selectRace(race) {
-        selection.race = race;
-        
-        const classOptions = document.getElementById('class-options');
-        classOptions.innerHTML = '';
-        
-        data.classes.forEach(cls => {
-            const btn = document.createElement('button');
-            btn.className = 'btn-option';
-            btn.innerText = cls;
-            btn.onclick = () => selectClass(cls);
-            classOptions.appendChild(btn);
-        });
-        
-        showStep('class');
-    }
-
-    function selectClass(cls) {
-        selection.class = cls;
-        
-        const specOptions = document.getElementById('spec-options');
-        specOptions.innerHTML = '';
-        
-        const availableSpecs = data.specs[cls] || [];
-        
-        availableSpecs.forEach(spec => {
-            const btn = document.createElement('button');
-            btn.className = 'btn-option';
-            btn.innerText = spec;
-            btn.onclick = () => selectSpec(spec);
-            specOptions.appendChild(btn);
-        });
-        
-        showStep('spec');
-    }
-
-    function selectSpec(spec) {
-        selection.spec = spec;
-        
-        document.getElementById('res-faction').innerText = selection.faction;
-        document.getElementById('res-race').innerText = selection.race;
-        document.getElementById('res-class').innerText = selection.class;
-        document.getElementById('res-spec').innerText = selection.spec;
-        
-        showStep('result');
-    }
-
-    function goBack(toStep) {
-        showStep(toStep);
-    }
-
-    function restart() {
-        selection = { faction: '', race: '', class: '', spec: '' };
-        showStep('faction');
-    }
-</script>
-
-</body>
-</html>
+    // Klassrestriktioner exakt som du angav dem
+    const classRestrictions = {
+        'Orc': ['Warrior', 'Hunter', 'Mage', 'Rogue', 'Warlock', 'Shaman'],
+        'Undead': ['Warrior', 'Mage', 'Rogue', 'Priest', 'Warlock', 'Paladin'],
+        'Tauren': ['Warrior', 'Hunter', 'Druid', 'Shaman'],
+        'Troll': ['Warrior', 'Hunter', 'Mage', 'Rogue', 'Priest', 'Warlock', 'Shaman'],
+        'Windshaper Skyborne': ['Warrior', 'Hunter', 'Rogue', 'Druid', 'Shaman'],
+        'Human': ['Warrior', 'Hunter', 'Mage', 'Rogue', 'Priest', 'Warlock', 'Paladin'],
+'Dwarf': ['Warrior', 'Hunter', 'Rogue', 'Priest', 'Paladin', 'Shaman'],
+'Night Elf': ['Warrior', 'Hunter', 'Rogue', 'Priest', 'Druid'],
+'Gnome': ['Warrior', 'Mage', 'Rogue', 'Priest', 'Warlock'],
+'High Order Skyborne': ['Warrior', 'Hunter', 'Mage', 'Rogue', 'Druid']
+};
+function selectFaction(faction) {
+selectedFaction = faction;
+const raceContainer = document.getElementById('race-options');
+raceContainer.innerHTML = '';
+let races = [];
+if (faction === 'Alliance') {
+races = ['Human', 'Dwarf', 'Night Elf', 'Gnome', 'High Order Skyborne'];
+} else {
+races = ['Orc', 'Undead', 'Tauren', 'Troll', 'Windshaper Skyborne'];
+}
+races.forEach(race => {
+const btn = document.createElement('button');
+btn.className = 'option-btn';
+btn.onclick = () => selectRace(race);
+// Skapar bildkomponent (använder de samlade bilderna du skickade)
+const img = document.createElement('img');
+img.src = images.race[race];
+btn.appendChild(img);
+btn.appendChild(document.createTextNode(race));
+raceContainer.appendChild(btn);
+});
+switchStep('race');
+}
+function selectRace(race) {
+selectedRace = race;
+const classContainer = document.getElementById('class-options');
+classContainer.innerHTML = '';
+const availableClasses = classRestrictions[race] || [];
+availableClasses.forEach(cls => {
+const btn = document.createElement('button');
+btn.className = 'option-btn';
+btn.onclick = () => selectClass(cls);
+const img = document.createElement('img');
+img.src = images.classes[cls];
+btn.appendChild(img);
+btn.appendChild(document.createTextNode(cls));
+classContainer.appendChild(btn);
+});
+switchStep('class');
+}
+function selectClass(cls) {
+selectedClass = cls;
+// Sätt ihop resultatskärmen
+const factionEmoji = selectedFaction === 'Alliance' ? '🔵' : '🔴';
+document.getElementById('result-text').innerText = ${factionEmoji} ${selectedFaction} - ${selectedRace} (${selectedClass});
+// Sätt rätt bilder på slutet
+document.getElementById('res-img-faction').src = images.faction[selectedFaction];
+document.getElementById('res-img-race').src = images.race[selectedRace];
+document.getElementById('res-img-class').src = images.classes[selectedClass];
+// Snygga till kantfärg baserat på fraktion
+const cardBox = document.getElementById('result-card-box');
+if(selectedFaction === 'Alliance') {
+cardBox.style.borderColor = 'var(--alliance-blue)';
+} else {
+cardBox.style.borderColor = 'var(--horde-red)';
+}
+switchStep('result');
+}
+function switchStep(stepId) {
+document.querySelectorAll('.step').forEach(step => step.classList.remove('active'));
+document.getElementById(step-${stepId}).classList.add('active');
+}
+function goBack(toStep) {
+switchStep(toStep);
+document.getElementById('success-text').style.display = 'none';
+}
+function resetPoll() {
+selectedFaction = '';
+selectedRace = '';
+selectedClass = '';
+document.getElementById('success-text').style.display = 'none';
+switchStep('faction');
+}
+function copyToDiscord() {
+const factionEmoji = selectedFaction === 'Alliance' ? '🔵' : '🔴';
+const textToCopy = **Fraktionsval:** ${factionEmoji} ${selectedFaction}\n**Ras:** ${selectedRace}\n**Klass:** ${selectedClass};
+navigator.clipboard.writeText(textToCopy).then(() => {
+const successMsg = document.getElementById('success-text');
+successMsg.style.display = 'block';
+setTimeout(() => {
+successMsg.style.display = 'none';
+}, 4000);
+});
+}
