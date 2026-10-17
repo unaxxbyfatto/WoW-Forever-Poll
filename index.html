@@ -21,6 +21,32 @@
             border-radius: 12px;
             box-shadow: 0 8px 25px rgba(0, 0, 0, 0.8);
             border: 1px solid #383838;
+            position: relative;
+        }
+        /* Musikknapp uppe till höger */
+        .music-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: #262626;
+            color: #f8b700;
+            border: 2px solid #f8b700;
+            padding: 8px 16px;
+            border-radius: 25px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
+            transition: all 0.2s;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .music-toggle:hover {
+            background-color: #f8b700;
+            color: #121212;
+            transform: scale(1.05);
         }
         h2 {
             color: #f8b700;
@@ -202,6 +228,12 @@
 </head>
 <body>
 
+<!-- BAKGRUNDSMUSIK (LOOP) -->
+<audio id="bg-music" src="theme.mp3" loop preload="auto"></audio>
+<button id="music-btn" class="music-toggle" onclick="toggleMusic(event)">
+    🔇 Play Music
+</button>
+
 <div class="container">
     <!-- STEG 1: FACTION -->
     <div id="step-faction" class="step active">
@@ -269,11 +301,54 @@
 </div>
 
 <script>
-    // =========================================================================
-    // KLISTRA IN DIN FIREBASE-LÄNK HÄR NEDANFÖR MELLAN CITATIONSTECKNEN:
-    // =========================================================================
+    // Din Firebase-länk
     const DATABASE_URL = "https://wow-poll-e8e48-default-rtdb.europe-west1.firebasedatabase.app/";
 
+    // ================= MUSIK-LOGIK =================
+    const bgMusic = document.getElementById('bg-music');
+    const musicBtn = document.getElementById('music-btn');
+    bgMusic.volume = 0.35; // Behaglig startvolym (35%)
+    let musicStarted = false;
+
+    function updateMusicButton() {
+        if (bgMusic.paused) {
+            musicBtn.innerHTML = "🔇 Play Music";
+        } else {
+            musicBtn.innerHTML = "🔊 Mute Music";
+        }
+    }
+
+    function toggleMusic(event) {
+        event.stopPropagation(); // Förhindrar dubbelklick med auto-start
+        musicStarted = true;
+        if (bgMusic.paused) {
+            bgMusic.play().then(updateMusicButton).catch(() => {});
+        } else {
+            bgMusic.pause();
+            updateMusicButton();
+        }
+    }
+
+    // Försök starta direkt, annars vid första klicket varsomhelst på sidan
+    window.addEventListener('DOMContentLoaded', () => {
+        bgMusic.play().then(() => {
+            musicStarted = true;
+            updateMusicButton();
+        }).catch(() => {
+            // Om webbläsaren kräver ett klick först:
+            document.body.addEventListener('click', function startOnFirstClick() {
+                if (!musicStarted) {
+                    bgMusic.play().then(() => {
+                        musicStarted = true;
+                        updateMusicButton();
+                    }).catch(() => {});
+                }
+                document.body.removeEventListener('click', startOnFirstClick);
+            });
+        });
+    });
+
+    // ================= POLL-LOGIK =================
     const racesByFaction = {
         "Alliance": ["Human", "Dwarf", "Night Elf", "Gnome", "High Order Skyborne"],
         "Horde": ["Orc", "Undead", "Tauren", "Troll", "Windshaper Skyborne"]
@@ -406,7 +481,6 @@
         submitBtn.disabled = true;
         submitBtn.textContent = "Saving...";
 
-        // Visa personliga resultatet
         document.getElementById('personal-result-section').style.display = 'block';
         document.getElementById('result-title').textContent = `${currentSelection.name}'s Character`;
         document.getElementById('txt-faction').textContent = currentSelection.faction;
@@ -416,7 +490,6 @@
         document.getElementById('txt-class').textContent = currentSelection.charClass;
         document.getElementById('res-img-class').innerHTML = createSpriteHTML(currentSelection.charClass, 95);
 
-        // Spara till molnet (Firebase)
         await saveEntryToInternet(currentSelection);
         await loadEntriesFromInternet();
 
@@ -433,7 +506,7 @@
                 body: JSON.stringify(entry)
             });
         } catch (err) {
-            alert("Kunde inte spara till internet. Har du klistrat in din Firebase-länk i koden?");
+            alert("Kunde inte spara till internet.");
         }
     }
 
@@ -448,7 +521,7 @@
                 return;
             }
 
-            const entries = Object.values(data).reverse(); // Nyaste överst
+            const entries = Object.values(data).reverse();
             container.innerHTML = entries.map(item => `
                 <div class="saved-item">
                     <div>
@@ -462,7 +535,7 @@
                 </div>
             `).join('');
         } catch (err) {
-            container.innerHTML = '<p style="color:#ff5555;">Could not load list. Check DATABASE_URL in code.</p>';
+            container.innerHTML = '<p style="color:#ff5555;">Could not load list.</p>';
         }
     }
 
