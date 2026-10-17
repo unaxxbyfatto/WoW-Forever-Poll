@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WoW Karaktärsväljare</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #121212;
+            color: #e0e0e0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        .container {
+            background-color: #1e1e1e;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+            max-width: 500px;
+            width: 100%;
+            text-align: center;
+            border: 1px solid #333;
+        }
+        h1 {
+            color: #fff;
+            margin-bottom: 24px;
+            font-size: 24px;
+        }
+        .step {
+            display: none;
+        }
+        .step.active {
+            display: block;
+        }
+        .btn-group {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 20px;
+        }
+        button {
+            padding: 14px 20px;
+            font-size: 16px;
+            font-weight: 600;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .btn-alliance {
+            background-color: #004481;
+            color: #fff;
+        }
+        .btn-alliance:hover {
+            background-color: #005fa3;
+        }
+        .btn-horde {
+            background-color: #8c1616;
+            color: #fff;
+        }
+        .btn-horde:hover {
+            background-color: #b31c1c;
+        }
+        .btn-option {
+            background-color: #333;
+            color: #fff;
+            text-align: left;
+            padding-left: 20px;
+        }
+        .btn-option:hover {
+            background-color: #444;
+            border-left: 4px solid #f3d231;
+        }
+        .btn-back {
+            background-color: transparent;
+            color: #aaa;
+            border: 1px solid #444;
+            margin-top: 15px;
+            font-size: 14px;
+            padding: 8px 16px;
+        }
+        .btn-back:hover {
+            color: #fff;
+            background-color: #222;
+        }
+        .summary-box {
+            background-color: #252525;
+            padding: 15px;
+            border-radius: 6px;
+            margin: 20px 0;
+            text-align: left;
+            border-left: 4px solid #4caf50;
+        }
+        .summary-item {
+            margin: 5px 0;
+            font-size: 16px;
+        }
+        .summary-label {
+            color: #888;
+        }
+        .summary-value {
+            font-weight: bold;
+            color: #fff;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <!-- STEG 1: Fraktion -->
+    <div id="step-faction" class="step active">
+        <h1>Välj din fraktion</h1>
+        <div class="btn-group">
+            <button class="btn-alliance" onclick="selectFaction('Alliance')">Alliance</button>
+            <button class="btn-horde" onclick="selectFaction('Horde')">Horde</button>
+        </div>
+    </div>
+
+    <!-- STEG 2: Ras -->
+    <div id="step-race" class="step">
+        <h1>Välj din ras</h1>
+        <div class="btn-group" id="race-options"></div>
+        <button class="btn-back" onclick="goBack('faction')">Bakåt</button>
+    </div>
+
+    <!-- STEG 3: Klass -->
+    <div id="step-class" class="step">
+        <h1>Välj din klass</h1>
+        <div class="btn-group" id="class-options"></div>
+        <button class="btn-back" onclick="goBack('race')">Bakåt</button>
+    </div>
+
+    <!-- STEG 4: Spec -->
+    <div id="step-spec" class="step">
+        <h1>Välj din inriktning (Spec)</h1>
+        <div class="btn-group" id="spec-options"></div>
+        <button class="btn-back" onclick="goBack('class')">Bakåt</button>
+    </div>
+
+    <!-- STEG 5: Slutresultat -->
+    <div id="step-result" class="step">
+        <h1>Valet är registrerat!</h1>
+        <div class="summary-box">
+            <div class="summary-item"><span class="summary-label">Fraktion:</span> <span class="summary-value" id="res-faction"></span></div>
+            <div class="summary-item"><span class="summary-label">Ras:</span> <span class="summary-value" id="res-race"></span></div>
+            <div class="summary-item"><span class="summary-label">Klass:</span> <span class="summary-value" id="res-class"></span></div>
+            <div class="summary-item"><span class="summary-label">Spec:</span> <span class="summary-value" id="res-spec"></span></div>
+        </div>
+        <button class="btn-option" style="text-align:center;" onclick="restart()">Gör en ny omröstning</button>
+    </div>
+</div>
+
+<script>
+    const data = {
+        races: {
+            'Alliance': ['Human', 'Dwarf', 'Night Elf', 'Gnome', 'Draenei', 'Worgen', 'Pandaren', 'Void Elf', 'Lightforged Draenei', 'Dark Iron Dwarf', 'Kul Tiran', 'Mechagnome', 'Earthen'],
+            'Horde': ['Orc', 'Undead', 'Tauren', 'Troll', 'Blood Elf', 'Goblin', 'Pandaren', 'Nightborne', 'Highmountain Tauren', 'Mag'har Orc', 'Zandalari Troll', 'Vulpera', 'Earthen']
+        },
+        classes: ['Warrior', 'Paladin', 'Hunter', 'Rogue', 'Priest', 'Death Knight', 'Shaman', 'Mage', 'Warlock', 'Monk', 'Druid', 'Demon Hunter', 'Evoker'],
+        specs: {
+            'Warrior': ['Arms', 'Fury', 'Protection'],
+            'Paladin': ['Holy', 'Protection', 'Retribution'],
+            'Hunter': ['Beast Mastery', 'Marksmanship', 'Survival'],
+            'Rogue': ['Assassination', 'Outlaw', 'Subtlety'],
+            'Priest': ['Discipline', 'Holy', 'Shadow'],
+            'Death Knight': ['Blood', 'Frost', 'Unholy'],
+            'Shaman': ['Elemental', 'Enhancement', 'Restoration'],
+            'Mage': ['Arcane', 'Fire', 'Frost'],
+            'Warlock': ['Affliction', 'Demonology', 'Destruction'],
+            'Monk': ['Brewmaster', 'Mistweaver', 'Windwalker'],
+            'Druid': ['Balance', 'Feral', 'Guardian', 'Restoration'],
+            'Demon Hunter': ['Havoc', 'Vengeance'],
+            'Evoker': ['Devastation', 'Preservation', 'Augmentation']
+        }
+    };
+
+    let selection = {
+        faction: '',
+        race: '',
+        class: '',
+        spec: ''
+    };
+
+    function showStep(stepId) {
+        document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+        document.getElementById('step-' + stepId).classList.add('active');
+    }
+
+    function selectFaction(faction) {
+        selection.faction = faction;
+        
+        const raceOptions = document.getElementById('race-options');
+        raceOptions.innerHTML = '';
+        
+        data.races[faction].forEach(race => {
+            const btn = document.createElement('button');
+            btn.className = 'btn-option';
+            btn.innerText = race;
+            btn.onclick = () => selectRace(race);
+            raceOptions.appendChild(btn);
+        });
+        
+        showStep('race');
+    }
+
+    function selectRace(race) {
+        selection.race = race;
+        
+        const classOptions = document.getElementById('class-options');
+        classOptions.innerHTML = '';
+        
+        data.classes.forEach(cls => {
+            const btn = document.createElement('button');
+            btn.className = 'btn-option';
+            btn.innerText = cls;
+            btn.onclick = () => selectClass(cls);
+            classOptions.appendChild(btn);
+        });
+        
+        showStep('class');
+    }
+
+    function selectClass(cls) {
+        selection.class = cls;
+        
+        const specOptions = document.getElementById('spec-options');
+        specOptions.innerHTML = '';
+        
+        const availableSpecs = data.specs[cls] || [];
+        
+        availableSpecs.forEach(spec => {
+            const btn = document.createElement('button');
+            btn.className = 'btn-option';
+            btn.innerText = spec;
+            btn.onclick = () => selectSpec(spec);
+            specOptions.appendChild(btn);
+        });
+        
+        showStep('spec');
+    }
+
+    function selectSpec(spec) {
+        selection.spec = spec;
+        
+        document.getElementById('res-faction').innerText = selection.faction;
+        document.getElementById('res-race').innerText = selection.race;
+        document.getElementById('res-class').innerText = selection.class;
+        document.getElementById('res-spec').innerText = selection.spec;
+        
+        showStep('result');
+    }
+
+    function goBack(toStep) {
+        showStep(toStep);
+    }
+
+    function restart() {
+        selection = { faction: '', race: '', class: '', spec: '' };
+        showStep('faction');
+    }
+</script>
+
+</body>
+</html>
