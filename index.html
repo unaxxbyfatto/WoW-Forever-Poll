@@ -7,28 +7,69 @@
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #121212;
+            background-color: #000;
             color: #f0f0f0;
             text-align: center;
             padding: 30px 15px;
             margin: 0;
+            min-height: 100vh;
+            overflow-x: hidden;
         }
+
+        /* YOUTUBE HELSKÄRMS-BAKGRUND */
+        .video-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: -2;
+            overflow: hidden;
+            pointer-events: none; /* Gör så att man inte råkar klicka på själva YouTube-spelaren */
+        }
+        .video-background iframe {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 100vw;
+            height: 56.25vw; /* 16:9 format */
+            min-height: 100vh;
+            min-width: 177.77vh; /* Täcker hela skärmen även på smala skärmar */
+            transform: translate(-50%, -50%);
+            border: 0;
+        }
+
+        /* Mörkt filter över videon så att texten syns tydligt */
+        .video-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.35);
+            z-index: -1;
+        }
+
+        /* Halvgenomskinlig ruta så att videon syns igenom */
         .container {
             max-width: 720px;
-            margin: 0 auto;
-            background-color: #1e1e1e;
+            margin: 20px auto;
+            background-color: rgba(20, 20, 20, 0.78);
+            backdrop-filter: blur(6px);
+            -webkit-backdrop-filter: blur(6px);
             padding: 30px;
             border-radius: 12px;
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.8);
-            border: 1px solid #383838;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.9);
+            border: 1px solid rgba(248, 183, 0, 0.4);
             position: relative;
         }
-        /* Musikknapp uppe till höger */
+
+        /* Ljudknapp uppe till höger */
         .music-toggle {
             position: fixed;
             top: 20px;
             right: 20px;
-            background-color: #262626;
+            background-color: rgba(30, 30, 30, 0.85);
             color: #f8b700;
             border: 2px solid #f8b700;
             padding: 8px 16px;
@@ -36,23 +77,22 @@
             font-size: 14px;
             font-weight: bold;
             cursor: pointer;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.7);
             transition: all 0.2s;
             z-index: 1000;
-            display: flex;
-            align-items: center;
-            gap: 8px;
         }
         .music-toggle:hover {
             background-color: #f8b700;
             color: #121212;
             transform: scale(1.05);
         }
+
         h2 {
             color: #f8b700;
             margin-top: 0;
             text-transform: uppercase;
             letter-spacing: 1px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.8);
         }
         .step {
             display: none;
@@ -73,7 +113,7 @@
             margin-top: 25px;
         }
         .card-btn {
-            background-color: #262626;
+            background-color: rgba(38, 38, 38, 0.85);
             color: #fff;
             border: 2px solid #555;
             padding: 15px;
@@ -87,9 +127,9 @@
         }
         .card-btn:hover {
             border-color: #f8b700;
-            background-color: #303030;
+            background-color: rgba(55, 55, 55, 0.95);
             transform: translateY(-4px);
-            box-shadow: 0 5px 15px rgba(248, 183, 0, 0.25);
+            box-shadow: 0 5px 15px rgba(248, 183, 0, 0.35);
         }
         .card-btn span {
             margin-top: 12px;
@@ -101,7 +141,7 @@
         .icon-box {
             border-radius: 6px;
             background-repeat: no-repeat;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.6);
+            box-shadow: 0 2px 6px rgba(0,0,0,0.8);
             flex-shrink: 0;
         }
         button.action-btn {
@@ -124,9 +164,9 @@
             cursor: not-allowed;
         }
         button.back-btn {
-            border: 1px solid #666;
-            background-color: transparent;
-            color: #aaa;
+            border: 1px solid #888;
+            background-color: rgba(0,0,0,0.4);
+            color: #ccc;
             margin-top: 25px;
             font-size: 14px;
             padding: 8px 18px;
@@ -134,16 +174,16 @@
             cursor: pointer;
         }
         button.back-btn:hover {
-            border-color: #aaa;
+            border-color: #f8b700;
             color: #fff;
-            background-color: #333;
+            background-color: rgba(0,0,0,0.7);
         }
         input[type="text"] {
             padding: 12px 15px;
             font-size: 16px;
             border-radius: 6px;
-            border: 2px solid #555;
-            background-color: #2c2c2c;
+            border: 2px solid #666;
+            background-color: rgba(30, 30, 30, 0.9);
             color: #fff;
             width: 75%;
             max-width: 300px;
@@ -161,7 +201,7 @@
             flex-wrap: wrap;
         }
         .result-card {
-            background: #262626;
+            background: rgba(38, 38, 38, 0.9);
             padding: 18px;
             border-radius: 10px;
             border: 2px solid #f8b700;
@@ -179,10 +219,10 @@
         .saved-list {
             margin-top: 40px;
             text-align: left;
-            background: #161616;
+            background: rgba(15, 15, 15, 0.85);
             padding: 20px;
             border-radius: 8px;
-            border: 1px solid #333;
+            border: 1px solid #444;
         }
         .saved-list-header {
             display: flex;
@@ -214,7 +254,7 @@
             align-items: center;
             justify-content: space-between;
             padding: 10px 0;
-            border-bottom: 1px solid #262626;
+            border-bottom: 1px solid #2a2a2a;
         }
         .saved-item:last-child {
             border-bottom: none;
@@ -228,10 +268,15 @@
 </head>
 <body>
 
-<!-- BAKGRUNDSMUSIK (LOOP) -->
-<audio id="bg-music" src="theme.mp3" loop preload="auto"></audio>
-<button id="music-btn" class="music-toggle" onclick="toggleMusic(event)">
-    🔇 Play Music
+<!-- YOUTUBE BAKGRUNDSVIDEO -->
+<div class="video-background">
+    <div id="yt-player"></div>
+</div>
+<div class="video-overlay"></div>
+
+<!-- LJUDKNAPP -->
+<button id="music-btn" class="music-toggle" onclick="toggleSound(event)">
+    🔇 Enable Sound
 </button>
 
 <div class="container">
@@ -300,52 +345,86 @@
     </div>
 </div>
 
+<!-- Ladda YouTube IFrame API -->
+<script src="https://www.youtube.com/iframe_api"></script>
+
 <script>
     // Din Firebase-länk
     const DATABASE_URL = "https://wow-poll-e8e48-default-rtdb.europe-west1.firebasedatabase.app/";
 
-    // ================= MUSIK-LOGIK =================
-    const bgMusic = document.getElementById('bg-music');
+    // ================= YOUTUBE VIDEO & LJUD-LOGIK =================
+    const YOUTUBE_VIDEO_ID = "7I3t-zubmBM";
+    let ytPlayer;
+    let isPlayerReady = false;
+    let soundUnlocked = false;
     const musicBtn = document.getElementById('music-btn');
-    bgMusic.volume = 0.35; // Behaglig startvolym (35%)
-    let musicStarted = false;
 
-    function updateMusicButton() {
-        if (bgMusic.paused) {
-            musicBtn.innerHTML = "🔇 Play Music";
-        } else {
-            musicBtn.innerHTML = "🔊 Mute Music";
-        }
-    }
-
-    function toggleMusic(event) {
-        event.stopPropagation(); // Förhindrar dubbelklick med auto-start
-        musicStarted = true;
-        if (bgMusic.paused) {
-            bgMusic.play().then(updateMusicButton).catch(() => {});
-        } else {
-            bgMusic.pause();
-            updateMusicButton();
-        }
-    }
-
-    // Försök starta direkt, annars vid första klicket varsomhelst på sidan
-    window.addEventListener('DOMContentLoaded', () => {
-        bgMusic.play().then(() => {
-            musicStarted = true;
-            updateMusicButton();
-        }).catch(() => {
-            // Om webbläsaren kräver ett klick först:
-            document.body.addEventListener('click', function startOnFirstClick() {
-                if (!musicStarted) {
-                    bgMusic.play().then(() => {
-                        musicStarted = true;
-                        updateMusicButton();
-                    }).catch(() => {});
+    function onYouTubeIframeAPIReady() {
+        ytPlayer = new YT.Player('yt-player', {
+            videoId: YOUTUBE_VIDEO_ID,
+            playerVars: {
+                autoplay: 1,
+                controls: 0,
+                showinfo: 0,
+                modestbranding: 1,
+                loop: 1,
+                playlist: YOUTUBE_VIDEO_ID, // Krävs av YouTube för att loopa
+                fs: 0,
+                cc_load_policy: 0,
+                iv_load_policy: 3,
+                autohide: 1,
+                mute: 1,
+                playsinline: 1
+            },
+            events: {
+                onReady: function(event) {
+                    isPlayerReady = true;
+                    event.target.setVolume(35);
+                    event.target.playVideo();
+                },
+                onStateChange: function(event) {
+                    // Extra säkerhet så att videon alltid loopar direkt när den tar slut
+                    if (event.data === YT.PlayerState.ENDED) {
+                        ytPlayer.playVideo();
+                    }
                 }
-                document.body.removeEventListener('click', startOnFirstClick);
-            });
+            }
         });
+    }
+
+    function updateSoundButton() {
+        if (!isPlayerReady || ytPlayer.isMuted()) {
+            musicBtn.innerHTML = "🔇 Enable Sound";
+        } else {
+            musicBtn.innerHTML = "🔊 Mute Sound";
+        }
+    }
+
+    function toggleSound(event) {
+        event.stopPropagation();
+        if (!isPlayerReady) return;
+        soundUnlocked = true;
+
+        if (ytPlayer.isMuted()) {
+            ytPlayer.unMute();
+            ytPlayer.setVolume(35);
+            ytPlayer.playVideo();
+        } else {
+            ytPlayer.mute();
+        }
+        updateSoundButton();
+    }
+
+    // Slå på ljudet automatiskt vid första klicket varsomhelst på sidan
+    document.body.addEventListener('click', function unlockOnFirstClick() {
+        if (!soundUnlocked && isPlayerReady) {
+            soundUnlocked = true;
+            ytPlayer.unMute();
+            ytPlayer.setVolume(35);
+            ytPlayer.playVideo();
+            updateSoundButton();
+            document.body.removeEventListener('click', unlockOnFirstClick);
+        }
     });
 
     // ================= POLL-LOGIK =================
