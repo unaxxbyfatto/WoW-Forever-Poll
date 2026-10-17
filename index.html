@@ -93,6 +93,10 @@
             background-color: #ffca2c;
             transform: scale(1.03);
         }
+        button.action-btn:disabled {
+            background-color: #666;
+            cursor: not-allowed;
+        }
         button.back-btn {
             border: 1px solid #666;
             background-color: transparent;
@@ -166,18 +170,18 @@
             margin: 0;
             color: #f8b700;
         }
-        .clear-btn {
+        .refresh-btn {
             background: transparent;
-            border: 1px solid #555;
-            color: #888;
+            border: 1px solid #f8b700;
+            color: #f8b700;
             font-size: 12px;
-            padding: 4px 10px;
+            padding: 5px 12px;
             border-radius: 4px;
             cursor: pointer;
         }
-        .clear-btn:hover {
-            color: #ff5555;
-            border-color: #ff5555;
+        .refresh-btn:hover {
+            background: #f8b700;
+            color: #121212;
         }
         .saved-item {
             display: flex;
@@ -203,6 +207,8 @@
     <div id="step-faction" class="step active">
         <h2>Step 1: Choose Faction</h2>
         <div id="faction-options" class="options-grid"></div>
+        <br>
+        <button class="back-btn" onclick="viewResultsDirectly()">View Everyone's Choices →</button>
     </div>
 
     <!-- STEG 2: RACE -->
@@ -225,44 +231,49 @@
         <div>
             <input type="text" id="player-name" placeholder="Enter your name..." />
         </div>
-        <button class="action-btn" onclick="submitPoll()">Save & Show Result</button>
+        <button id="submit-btn" class="action-btn" onclick="submitPoll()">Save & Show Result</button>
         <br>
         <button class="back-btn" onclick="showStep('step-class')">← Back</button>
     </div>
 
     <!-- STEG 5: RESULTAT -->
     <div id="step-result" class="step">
-        <h2 id="result-title">Your Character</h2>
-        
-        <div class="result-images">
-            <div class="result-card">
-                <div id="res-img-faction"></div>
-                <p id="txt-faction"></p>
-            </div>
-            <div class="result-card">
-                <div id="res-img-race"></div>
-                <p id="txt-race"></p>
-            </div>
-            <div class="result-card">
-                <div id="res-img-class"></div>
-                <p id="txt-class"></p>
+        <div id="personal-result-section">
+            <h2 id="result-title">Your Character</h2>
+            <div class="result-images">
+                <div class="result-card">
+                    <div id="res-img-faction"></div>
+                    <p id="txt-faction"></p>
+                </div>
+                <div class="result-card">
+                    <div id="res-img-race"></div>
+                    <p id="txt-race"></p>
+                </div>
+                <div class="result-card">
+                    <div id="res-img-class"></div>
+                    <p id="txt-class"></p>
+                </div>
             </div>
         </div>
 
-        <button class="action-btn" onclick="resetPoll()">Add Another Person</button>
+        <button class="action-btn" onclick="resetPoll()">Create New Character</button>
 
         <div class="saved-list">
             <div class="saved-list-header">
-                <h3>All Saved Characters</h3>
-                <button class="clear-btn" onclick="clearSavedEntries()">Clear List</button>
+                <h3>Everyone's Characters (Live)</h3>
+                <button class="refresh-btn" onclick="loadEntriesFromInternet()">↻ Refresh List</button>
             </div>
-            <div id="entries-container"></div>
+            <div id="entries-container"><p style="color:#aaa;">Loading characters...</p></div>
         </div>
     </div>
 </div>
 
 <script>
-    // Exakta regler för valen
+    // =========================================================================
+    // KLISTRA IN DIN FIREBASE-LÄNK HÄR NEDANFÖR MELLAN CITATIONSTECKNEN:
+    // =========================================================================
+    const DATABASE_URL = "https://wow-poll-e8e48-default-rtdb.europe-west1.firebasedatabase.app/";
+
     const racesByFaction = {
         "Alliance": ["Human", "Dwarf", "Night Elf", "Gnome", "High Order Skyborne"],
         "Horde": ["Orc", "Undead", "Tauren", "Troll", "Windshaper Skyborne"]
@@ -281,43 +292,35 @@
         "High Order Skyborne": ["Warrior", "Hunter", "Mage", "Rogue", "Druid"]
     };
 
-    // Exakta koordinater för att klippa ut rätt porträtt/ikon ur dina 7 bilder
     const SPRITES = {
-        // Factions
         "Horde":    { file: "horde.png",    w: 112, h: 100, x: 0, y: 0, bgW: 112, bgH: 100 },
         "Alliance": { file: "alliance.png", w: 112, h: 102, x: 0, y: 0, bgW: 112, bgH: 102 },
 
-        // Alliance Races (alliance_races.png: 77x444)
         "Human":               { file: "alliance_races.png", w: 77, h: 80, x: 0, y: 0,   bgW: 77, bgH: 444 },
         "Dwarf":               { file: "alliance_races.png", w: 77, h: 80, x: 0, y: 90,  bgW: 77, bgH: 444 },
         "Night Elf":           { file: "alliance_races.png", w: 77, h: 80, x: 0, y: 180, bgW: 77, bgH: 444 },
         "Gnome":               { file: "alliance_races.png", w: 77, h: 80, x: 0, y: 270, bgW: 77, bgH: 444 },
         "High Order Skyborne": { file: "alliance_races.png", w: 77, h: 84, x: 0, y: 360, bgW: 77, bgH: 444 },
 
-        // Horde Races (horde_races.png: 74x438)
         "Orc":                 { file: "horde_races.png", w: 74, h: 78, x: 0, y: 0,   bgW: 74, bgH: 438 },
         "Undead":              { file: "horde_races.png", w: 74, h: 78, x: 0, y: 90,  bgW: 74, bgH: 438 },
         "Tauren":              { file: "horde_races.png", w: 74, h: 78, x: 0, y: 180, bgW: 74, bgH: 438 },
         "Troll":               { file: "horde_races.png", w: 74, h: 78, x: 0, y: 270, bgW: 74, bgH: 438 },
         "Windshaper Skyborne": { file: "horde_races.png", w: 74, h: 78, x: 0, y: 360, bgW: 74, bgH: 438 },
 
-        // Classes 1 (classes1.png: 299x81)
         "Warrior": { file: "classes1.png", w: 60, h: 58, x: 0,   y: 0, bgW: 299, bgH: 81 },
         "Hunter":  { file: "classes1.png", w: 60, h: 58, x: 79,  y: 0, bgW: 299, bgH: 81 },
         "Mage":    { file: "classes1.png", w: 64, h: 60, x: 155, y: 0, bgW: 299, bgH: 81 },
         "Rogue":   { file: "classes1.png", w: 60, h: 58, x: 237, y: 0, bgW: 299, bgH: 81 },
 
-        // Classes 2 (classes2.png: 223x80)
         "Priest":  { file: "classes2.png", w: 60, h: 58, x: 2,   y: 0, bgW: 223, bgH: 80 },
         "Warlock": { file: "classes2.png", w: 60, h: 58, x: 81,  y: 0, bgW: 223, bgH: 80 },
         "Paladin": { file: "classes2.png", w: 60, h: 58, x: 160, y: 0, bgW: 223, bgH: 80 },
 
-        // Classes 3 (classes3.png: 147x81)
         "Druid":   { file: "classes3.png", w: 60, h: 58, x: 3,   y: 1, bgW: 147, bgH: 81 },
         "Shaman":  { file: "classes3.png", w: 60, h: 58, x: 83,  y: 1, bgW: 147, bgH: 81 }
     };
 
-    // Skapar ett bild-element skalat till önskad storlek
     function createSpriteHTML(key, targetSize = 85) {
         const s = SPRITES[key];
         if (!s) return '';
@@ -338,14 +341,12 @@
         " title="${key}"></div>`;
     }
 
-    let currentSelection = {
-        faction: "",
-        race: "",
-        charClass: "",
-        name: ""
-    };
+    let currentSelection = { faction: "", race: "", charClass: "", name: "" };
 
-    // Initiera Steg 1 (Factions)
+    function getCleanDbUrl() {
+        return DATABASE_URL.replace(/\/$/, "") + "/characters.json";
+    }
+
     function initFactions() {
         const factionContainer = document.getElementById('faction-options');
         factionContainer.innerHTML = '';
@@ -370,7 +371,6 @@
             btn.innerHTML = `${createSpriteHTML(race, 80)}<span>${race}</span>`;
             raceContainer.appendChild(btn);
         });
-
         showStep('step-race');
     }
 
@@ -386,7 +386,6 @@
             btn.innerHTML = `${createSpriteHTML(charClass, 75)}<span>${charClass}</span>`;
             classContainer.appendChild(btn);
         });
-
         showStep('step-class');
     }
 
@@ -395,7 +394,7 @@
         showStep('step-name');
     }
 
-    function submitPoll() {
+    async function submitPoll() {
         const nameInput = document.getElementById('player-name').value.trim();
         if (!nameInput) {
             alert("Please enter your name!");
@@ -403,58 +402,78 @@
         }
         currentSelection.name = nameInput;
 
-        // Visa resultat och ikoner
+        const submitBtn = document.getElementById('submit-btn');
+        submitBtn.disabled = true;
+        submitBtn.textContent = "Saving...";
+
+        // Visa personliga resultatet
+        document.getElementById('personal-result-section').style.display = 'block';
         document.getElementById('result-title').textContent = `${currentSelection.name}'s Character`;
-        
         document.getElementById('txt-faction').textContent = currentSelection.faction;
         document.getElementById('res-img-faction').innerHTML = createSpriteHTML(currentSelection.faction, 95);
-
         document.getElementById('txt-race').textContent = currentSelection.race;
         document.getElementById('res-img-race').innerHTML = createSpriteHTML(currentSelection.race, 95);
-
         document.getElementById('txt-class').textContent = currentSelection.charClass;
         document.getElementById('res-img-class').innerHTML = createSpriteHTML(currentSelection.charClass, 95);
 
-        saveEntry(currentSelection);
-        renderSavedEntries();
+        // Spara till molnet (Firebase)
+        await saveEntryToInternet(currentSelection);
+        await loadEntriesFromInternet();
 
+        submitBtn.disabled = false;
+        submitBtn.textContent = "Save & Show Result";
         showStep('step-result');
     }
 
-    function saveEntry(entry) {
-        const saved = JSON.parse(localStorage.getItem('wowPollEntries') || '[]');
-        saved.push(entry);
-        localStorage.setItem('wowPollEntries', JSON.stringify(saved));
+    async function saveEntryToInternet(entry) {
+        try {
+            await fetch(getCleanDbUrl(), {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(entry)
+            });
+        } catch (err) {
+            alert("Kunde inte spara till internet. Har du klistrat in din Firebase-länk i koden?");
+        }
     }
 
-    function renderSavedEntries() {
+    async function loadEntriesFromInternet() {
         const container = document.getElementById('entries-container');
-        const saved = JSON.parse(localStorage.getItem('wowPollEntries') || '[]');
-        
-        if (saved.length === 0) {
-            container.innerHTML = '<p style="color:#777;">No characters saved yet.</p>';
-            return;
-        }
+        try {
+            const response = await fetch(getCleanDbUrl());
+            const data = await response.json();
 
-        container.innerHTML = saved.map(item => `
-            <div class="saved-item">
-                <div>
-                    <strong style="color:#f8b700;">${item.name}</strong> — ${item.faction} | ${item.race} ${item.charClass}
+            if (!data) {
+                container.innerHTML = '<p style="color:#777;">No characters saved yet.</p>';
+                return;
+            }
+
+            const entries = Object.values(data).reverse(); // Nyaste överst
+            container.innerHTML = entries.map(item => `
+                <div class="saved-item">
+                    <div>
+                        <strong style="color:#f8b700;">${escapeHtml(item.name)}</strong> — ${item.faction} | ${item.race} ${item.charClass}
+                    </div>
+                    <div class="saved-icons">
+                        ${createSpriteHTML(item.faction, 34)}
+                        ${createSpriteHTML(item.race, 34)}
+                        ${createSpriteHTML(item.charClass, 34)}
+                    </div>
                 </div>
-                <div class="saved-icons">
-                    ${createSpriteHTML(item.faction, 34)}
-                    ${createSpriteHTML(item.race, 34)}
-                    ${createSpriteHTML(item.charClass, 34)}
-                </div>
-            </div>
-        `).join('');
+            `).join('');
+        } catch (err) {
+            container.innerHTML = '<p style="color:#ff5555;">Could not load list. Check DATABASE_URL in code.</p>';
+        }
     }
 
-    function clearSavedEntries() {
-        if (confirm("Are you sure you want to clear all saved characters?")) {
-            localStorage.removeItem('wowPollEntries');
-            renderSavedEntries();
-        }
+    function viewResultsDirectly() {
+        document.getElementById('personal-result-section').style.display = 'none';
+        loadEntriesFromInternet();
+        showStep('step-result');
+    }
+
+    function escapeHtml(str) {
+        return String(str).replace(/[&<>"']/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m]));
     }
 
     function resetPoll() {
@@ -468,7 +487,6 @@
         document.getElementById(stepId).classList.add('active');
     }
 
-    // Starta igång första steget
     initFactions();
 </script>
 
