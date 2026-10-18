@@ -710,6 +710,59 @@
             border-radius: 4px;
             transition: width 0.3s ease;
         }
+        /* BLINKANDE "BUY CHEAP GOLD" RICKROLL-KNAPP */
+        .cheap-gold-btn {
+            position: absolute;
+            top: 56px;
+            left: 215px;
+            background: linear-gradient(180deg, #ffd700 0%, #ff8c00 100%);
+            color: #1a0f00;
+            border: 2px solid #ffffff;
+            padding: 7px 14px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 900;
+            text-decoration: none;
+            text-transform: uppercase;
+            cursor: pointer;
+            z-index: 50;
+            box-shadow: 0 0 15px #ffd700;
+            animation: goldBlink 0.75s infinite alternate;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .cheap-gold-btn:hover {
+            animation: none;
+            transform: scale(1.08);
+            background: linear-gradient(180deg, #fff066 0%, #ffa500 100%);
+            box-shadow: 0 0 25px #ffd700, 0 0 10px #ffffff;
+        }
+        @keyframes goldBlink {
+            0% {
+                transform: scale(1);
+                box-shadow: 0 0 8px #ffd700, 0 0 4px #ff0000;
+                border-color: #ffd700;
+            }
+            100% {
+                transform: scale(1.06);
+                box-shadow: 0 0 22px #ffea00, 0 0 14px #ff3300;
+                border-color: #ffffff;
+                background: linear-gradient(180deg, #ffffff 0%, #ffd700 100%);
+            }
+        }
+
+        /* Så den även sitter snyggt på mobilen */
+        @media (max-width: 900px) {
+            .cheap-gold-btn {
+                position: fixed;
+                top: 10px;
+                right: 10px;
+                left: auto;
+                font-size: 10px;
+                padding: 5px 10px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -722,6 +775,9 @@
 
 <!-- LJUDKNAPP -->
 <button id="music-btn" class="sound-btn" onclick="toggleSound(event)">🔇 Enable Sound</button>
+    <a href="https://www.youtube.com/watch?v=dQw4w9WgXcQ" target="_blank" class="cheap-gold-btn">
+    🪙 Buy Cheap Gold, 25% off original price!
+</a>
 
 <!-- HÖGST UPP: KÖNSVAL -->
 <div class="gender-bar">
