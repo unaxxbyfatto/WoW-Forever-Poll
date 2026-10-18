@@ -7,6 +7,44 @@
     <!-- Googles 3D-motor för .glb/.gltf-modeller -->
     <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.4.0/model-viewer.min.js"></script>
     <style>
+        /* SLUMP-KNAPP FÖR ROLL (SNURR & GLÖD) */
+        .random-role-btn {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 10px;
+            border: 2px dashed #ffd100;
+            border-radius: 6px;
+            background: #231d14;
+            cursor: pointer;
+            transition: all 0.15s;
+            margin-left: 6px;
+        }
+        .random-role-btn:hover {
+            background: #382e1e;
+            border-color: #fff3a1;
+            transform: scale(1.05);
+        }
+        .random-role-btn span {
+            font-size: 11px;
+            font-weight: bold;
+            color: #fff3a1;
+        }
+        @keyframes spinRoleIcon {
+            0%   { transform: rotate(0deg) scale(1); }
+            50%  { transform: rotate(540deg) scale(1.25); }
+            100% { transform: rotate(1080deg) scale(1); }
+        }
+        .spin-anim {
+            animation: spinRoleIcon 0.8s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+        @keyframes roleWinnerGlow {
+            0%, 100% { box-shadow: 0 0 12px #ffd100; border-color: #fff3a1; }
+            50%      { box-shadow: 0 0 28px #00ffcc, 0 0 15px #ffffff; border-color: #00ffcc; transform: scale(1.1); }
+        }
+        .role-slot.winner-glow {
+            animation: roleWinnerGlow 0.6s ease-in-out 3;
+        }
         * { box-sizing: border-box; user-select: none; }
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -926,11 +964,12 @@
         });
     }
 
-    function renderRoleBar() {
+    let isRollingRole = false;
+
+    function renderRoleBar(highlightWinner = false) {
         const bar = document.getElementById('role-bar');
         const allowedRoles = rolesByClass[currentSelection.charClass] || ["DPS"];
 
-        // Om nuvarande roll inte är tillåten för klassen (t.ex. man byter till Mage), välj automatiskt första tillåtna rollen (DPS)
         if (!allowedRoles.includes(currentSelection.role)) {
             currentSelection.role = allowedRoles[0];
         }
@@ -941,7 +980,7 @@
             const isAllowed = allowedRoles.includes(role);
             const isSelected = currentSelection.role === role;
             const btn = document.createElement('div');
-            btn.className = `role-slot ${!isAllowed ? 'disabled' : ''} ${isSelected ? 'selected' : ''}`;
+            btn.className = `role-slot ${!isAllowed ? 'disabled' : ''} ${isSelected ? 'selected' : ''} ${(isSelected && highlightWinner) ? 'winner-glow' : ''}`;
             if (isAllowed) {
                 btn.onclick = () => selectRole(role);
             }
@@ -951,6 +990,39 @@
             `;
             bar.appendChild(btn);
         });
+
+        // Knappen för "Can't choose role, help me!"
+        const randBtn = document.createElement('div');
+        randBtn.className = 'random-role-btn';
+        randBtn.title = "Can't choose role? Click to roll!";
+        randBtn.onclick = () => rollRandomRole();
+        randBtn.innerHTML = `
+            <img id="random-role-img" src="Cant_choose_role_help_me.png" alt="?" class="role-icon-img" style="width:28px; height:28px;" onerror="this.style.opacity='0.3'">
+            <span>Help me!</span>
+        `;
+        bar.appendChild(randBtn);
+    }
+
+    function rollRandomRole() {
+        if (isRollingRole) return;
+        isRollingRole = true;
+
+        const img = document.getElementById('random-role-img');
+        if (img) {
+            img.classList.remove('spin-anim');
+            void img.offsetWidth; // Startar om animationen
+            img.classList.add('spin-anim');
+        }
+
+        const allowedRoles = rolesByClass[currentSelection.charClass] || ["DPS"];
+
+        setTimeout(() => {
+            // Slumpa bland de tillåtna rollerna (För Mage/Warlock/Rogue/Hunter blir det alltid DPS!)
+            const randomIndex = Math.floor(Math.random() * allowedRoles.length);
+            currentSelection.role = allowedRoles[randomIndex];
+            isRollingRole = false;
+            renderRoleBar(true); // true = aktiverar den lysande effekten runt vinnarrollen!
+        }, 800);
     }
 
     function selectRace(faction, race) {
