@@ -552,54 +552,65 @@
 
     const RACE_TRAITS = {
         "Human": [
-            ["Will to Survive", "Removes all movement impairing effects and effects which cause loss of control."],
-            ["The Human Spirit", "Spirit increased by 5%."],
-            ["Diplomacy", "Reputation gains increased by 10%."]
+            ["Will to Survive", "Removes Stuns."],
+            ["Perception", "Detect Stealthed enemies for 20 sec."],
+            ["Ruthless", "Increase spell and ability Critical Chance by 2%."],
+            ["The Human Spirit", "Spirit increased by 5%."]
         ],
         "Dwarf": [
-            ["Stoneform", "Removes all poison, disease and bleed effects and increases Armor by 10% for 8 sec."],
-            ["Gun & Mace Specialization", "Increases expertise with Guns and Maces."],
-            ["Frost Resistance", "Reduces Frost damage taken."]
+            ["Find Treasure", "Track nearby treasure. Can be used at the same time as other tracking abilities."],
+            ["Big Game Hunter", "Damage dealt versus Beasts increased by 5%."],
+            ["Earth Fury", "Increases critical strike chance with all spells and attacks by 2%."],
+            ["Stoneform", "Removes and grants immunity to all Bleeds, Poisons, and Diseases, and reduces Physical damage taken by 10% for 8 sec."]
         ],
         "Night Elf": [
-            ["Shadowmeld", "Activate to slip into the shadows, reducing the chance for enemies to detect your presence."],
-            ["Quickness", "Reduces the chance that melee and ranged attackers will hit you by 2%."],
-            ["Nature Resistance", "Reduces Nature damage taken."]
+            ["Elune's Light", "Increases Critical Chance by 10% for 15 sec."],
+            ["Wisp Spirit", "Transform into a wisp upon death, increasing movement speed by 75%."],
+            ["Quickness", "Dodge chance increased by 1% and movement speed increased by 2%. Night Elf Rogues and Druids are harder to detect in Stealth as if they were 1 level higher."],
+            ["Shadowmeld", "Gain Stealth while immobile."]
         ],
         "Gnome": [
-            ["Escape Artist", "Escape the effects of any immobilization or movement speed reduction effect."],
-            ["Expansive Mind", "Intellect increased by 5%."],
-            ["Arcane Resistance", "Reduces Arcane damage taken."]
+            ["Eureka!", "Reduced cost and 10% increased damage for 8-seconds"],
+            ["Expansive Mind", "Maximum Mana, Rage, or Energy increased by 5%"],
+            ["Engineering Specialization", "More reliable engineering devices."],
+            ["Escape Artist", "Brief immunity to Roots and Snares."]
         ],
         "High Order Skyborne": [
-            ["Ascendant Flight", "Harness the astral winds to leap forward or glide swiftly across the battlefield."],
-            ["Celestial Attunement", "Increases haste and arcane/nature affinity."],
-            ["Skyguard Heritage", "Resilience against elemental effects."]
+            ["Walk on Air", "Glide downward through the air for 10 sec. 1.5 min CD"],
+            ["Read Ley Line", "Activate a ley line to gain 100% increased Health and Mana regeneration."],
+            ["Wind Blessed (Passive)", "3% increased melee, ranged, and spellcasting Haste."],
+            ["Elemental Insight (Passive)", "Damage to Elementals increased by 5%."]
         ],
         "Orc": [
-            ["Blood Fury", "Increases attack power and spell power for 15 sec."],
-            ["Hardiness", "Duration of Stun effects reduced by an additional 15%."],
-            ["Command", "Damage dealt by pets increased by 5%."]
+            ["Savage", "Increases your critical strike chance with all spells and abilities by 1%"],
+            ["Blood Fury", "Increases Attack Power and Spell Power by 10% for 15 sec. 2 Min CD."],
+            ["Shatter Curse", "Immunity to Curses and Banes and reduces Magical Damage taken by 5% for 8 sec."],
+            ["Hardiness", "Stun durations decreased by 20%."]
         ],
         "Undead": [
-            ["Will of the Forsaken", "Removes any Charm, Fear and Sleep effect."],
-            ["Cannibalize", "When activated, regenerates 7% of total health and mana every 2 sec for 10 sec."],
-            ["Shadow Resistance", "Reduces Shadow damage taken."]
+            ["Cannibalize", "When activated, regenerates 7% of total Health and 7% of total Mana every 2 sec for 10 sec. Only works on Humanoid or Undead corpses within 5 yds. Any movement, action, or damage taken while Cannibalizing will cancel the effect."],
+            ["Touch of the Grave", "Spells and attacks have a 20% chance to drain Health from the target, up to 5% of your maximum Health."],
+            ["Underwater Breathing", "Underwater breath lasts 300% longer than normal."],
+            ["Will of the Forsaken", "Removes any Charm, Fear and Sleep effect."]
         ],
         "Tauren": [
-            ["War Stomp", "Stuns up to 5 enemies within 8 yards for 2 sec."],
-            ["Endurance", "Base Health increased by 5%."],
-            ["Nature Resistance", "Reduces Nature damage taken."]
+            ["Cultivation", "Grow bonus herbs that don't require Herbalism to gather."],
+            ["Endurance", "Total Health increased by 5% and Hit Chance increased by 2%."],
+            ["Plainsrunning", "	Gain increased movement speed the longer you stay moving. In addition, You move 3% faster while mounted."],
+            ["War Stomp", "Stuns up to 5 enemies within 8 yards for 2 sec."]
         ],
         "Troll": [
+            ["Beast Slaying", "Damage to Beasts increased by 5%."],
             ["Berserking", "Increases casting and attack speed by 10% for 10 sec."],
-            ["Rapid Regeneration", "Regenerate 50% of maximum Health over time."],
-            ["Beast Slaying (Passive)", "Damage dealt versus Beasts increased by 5%."]
+            ["Regeneration", "Increases Health Regeneration by 20%, and 20% of Health Regeneration continues during combat."],
+            ["Rapid Regeneration", "Regenerate 50% of maximum Health over time."]
         ],
         "Windshaper Skyborne": [
-            ["Gale Surge", "Call upon primal winds to empower your movement and strikes."],
-            ["Stormborn", "Increases critical strike and elemental mastery."],
-            ["Windswept Grace", "Reduces falling damage and enhances agility."]
+            ["Walk on Air", "Glide downward through the air for 10 sec. 1.5 min CD"],
+            ["Skysight", "	Receive an Elemental Blessing increasing run speed by 10%."],
+            ["Wind Blessed (Passive)", "3% increased melee, ranged, and spellcasting Haste."],
+            ["Elemental Insight (Passive)", "Damage to Elementals increased by 5%."]
+            
         ]
     };
 
