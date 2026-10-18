@@ -49,8 +49,8 @@
         }
         model-viewer {
             width: 100%;
-            height: 82vh;
-            margin-top: -3vh;
+            height: 84vh;
+            margin-top: -2vh;
             --poster-color: transparent;
             outline: none;
             cursor: grab;
@@ -63,15 +63,16 @@
             bottom: 128px;
             left: 50%;
             transform: translateX(-50%);
-            background: rgba(0, 0, 0, 0.65);
+            background: rgba(0, 0, 0, 0.72);
             border: 1px solid #6b5a3e;
             color: #ffd100;
             font-size: 12px;
-            padding: 4px 14px;
+            padding: 5px 16px;
             border-radius: 15px;
             pointer-events: none;
             z-index: 5;
             letter-spacing: 0.5px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.8);
         }
 
         /* VÄNSTER SIDA: ALLIANCE & HORDE BANNERS */
@@ -253,7 +254,6 @@
             font-weight: bold;
             text-shadow: 0 1px 2px #000;
         }
-        /* Utgråade klasser som rasen inte kan välja */
         .class-slot.disabled {
             filter: grayscale(100%) brightness(38%);
             cursor: not-allowed;
@@ -398,19 +398,19 @@
     </div>
 </div>
 
-<!-- MITTEN: INTERAKTIV 3D- KARAKTÄR (MODEL-VIEWER) -->
+<!-- MITTEN: INTERAKTIV 3D-KARAKTÄR (MODEL-VIEWER) -->
 <div id="center-stage">
     <model-viewer
         id="char-3d-viewer"
-        src="https://modelviewer.dev/shared-assets/models/RobotExpressive.glb"
+        src=""
+        crossorigin="anonymous"
         camera-controls
         autoplay
         shadow-intensity="1.2"
         exposure="1"
-        camera-orbit="0deg 82deg 4.2m"
-        min-camera-orbit="auto 65deg auto"
-        max-camera-orbit="auto 95deg auto"
-        disable-zoom>
+        camera-orbit="0deg 82deg auto"
+        min-camera-orbit="auto 60deg auto"
+        max-camera-orbit="auto 95deg auto">
     </model-viewer>
     <div class="rotate-hint" id="model-status">🖱️ Drag with mouse to rotate 3D Character</div>
 </div>
@@ -466,31 +466,62 @@
 
 <script src="https://www.youtube.com/iframe_api"></script>
 <script>
+    // Din Firebase-länk
     const DATABASE_URL = "https://wow-poll-e8e48-default-rtdb.europe-west1.firebasedatabase.app/";
 
-    // ================= 3D-MODELL FILNAMN PER RAS =================
-    // När du lägger in egna .glb-filer på GitHub (t.ex. "troll.glb" eller "orc.glb") laddas de här automatiskt!
-    // Saknas filen på GitHub visas en demomodell så att 3D-rotationen alltid fungerar.
+    // Din Hugging Face bas-URL (med /resolve/main för direktströmning av .glb-filerna)
+    const HF_BASE_URL = "https://huggingface.co/datasets/fatto92/wow_models/resolve/main";
+
+    // Reservmodell om en fil mot förmodan skulle saknas
     const FALLBACK_3D_MODEL = "https://modelviewer.dev/shared-assets/models/RobotExpressive.glb";
+
+    // Mapp- och filnamnskonfiguration för alla 10 raser
+    const RACE_CONFIG = {
+        "Human":               { folder: "human",              filePrefix: "human" },
+        "Dwarf":               { folder: "dwarf",              filePrefix: "dwarf" },
+        "Night Elf":           { folder: "nightelf",           filePrefix: "nightelf" },
+        "Gnome":               { folder: "gnome",              filePrefix: "gnome" },
+        "High Order Skyborne": { folder: "undead",             altFolder: "highorderskyborne", filePrefix: "highorderskyborne" },
+        "Orc":                 { folder: "orc",                filePrefix: "orc" },
+        "Undead":              { folder: "undead",             filePrefix: "undead" },
+        "Tauren":              { folder: "tauren",             filePrefix: "tauren" },
+        "Troll":               { folder: "troll",              filePrefix: "troll" },
+        "Windshaper Skyborne": { folder: "undead",             altFolder: "windshaperskyborne", filePrefix: "windshaperskyborne" }
+    };
 
     function update3DModel() {
         const viewer = document.getElementById('char-3d-viewer');
         const statusText = document.getElementById('model-status');
-        const fileName = `${currentSelection.race.toLowerCase().replace(/\s+/g, '_')}_${currentSelection.gender.toLowerCase()}.glb`;
 
-        // Kolla om du har laddat upp den specifika .glb-filen på GitHub, annars kör vi 3D-demon
-        fetch(fileName, { method: 'HEAD' }).then(res => {
-            if (res.ok) {
-                viewer.src = fileName;
-                statusText.textContent = `🖱️ 3D Model: ${currentSelection.race} (${currentSelection.gender}) — Drag to rotate`;
-            } else {
-                viewer.src = FALLBACK_3D_MODEL;
-                statusText.textContent = `🖱️ 3D Preview: ${currentSelection.race} ${currentSelection.charClass} (Upload "${fileName}" to replace model)`;
+        const cfg = RACE_CONFIG[currentSelection.race];
+        const gender = currentSelection.gender.toLowerCase();
+        const fileName = `${cfg.filePrefix}${gender}_hd.glb`;
+
+        const primaryUrl = `${HF_BASE_URL}/character/${cfg.folder}/${gender}/${fileName}`;
+        const secondaryUrl = cfg.altFolder
+            ? `${HF_BASE_URL}/character/${cfg.altFolder}/${gender}/${fileName}`
+            : null;
+
+        statusText.textContent = `⏳ Loading 3D Model: ${currentSelection.race} (${currentSelection.gender})...`;
+        viewer.src = primaryUrl;
+
+        viewer.onload = () => {
+            if (viewer.src !== FALLBACK_3D_MODEL) {
+                statusText.textContent = `🖱️ ${currentSelection.race} (${currentSelection.gender}) — Drag with mouse to rotate`;
             }
-        }).catch(() => {
-            viewer.src = FALLBACK_3D_MODEL;
-            statusText.textContent = `🖱️ 3D Preview: ${currentSelection.race} ${currentSelection.charClass} (Drag to rotate)`;
-        });
+        };
+
+        viewer.onerror = () => {
+            // Om filen inte låg i första mappen (t.ex. undead), testa reservmappen innan fallback
+            if (secondaryUrl && viewer.src === primaryUrl) {
+                viewer.src = secondaryUrl;
+                return;
+            }
+            if (viewer.src !== FALLBACK_3D_MODEL) {
+                viewer.src = FALLBACK_3D_MODEL;
+                statusText.textContent = `⚠️ Could not load ${fileName} from Hugging Face`;
+            }
+        };
     }
 
     // ================= DATA: REGLER, LORE & RACIALS =================
@@ -800,7 +831,7 @@
             container.innerHTML = entries.map(item => `
                 <div class="saved-item">
                     <div>
-                        <strong style="color:#ffd100;">${escapeHtml(item.name)}</strong> — ${item.faction} | ${item.race} ${item.charClass}
+                        <strong style="color:#ffd100;">${escapeHtml(item.name)}</strong> — ${item.faction} | ${item.gender ? item.gender + ' ' : ''}${item.race} ${item.charClass}
                     </div>
                     <div class="saved-icons">
                         ${createSpriteHTML(item.faction, 30)}
