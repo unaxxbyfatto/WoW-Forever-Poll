@@ -615,39 +615,56 @@
         "Shaman": "Shaman commune directly with the elements. Their combination of wisdom and resilience makes them ideal as community advisors and leaders. In battle the shaman use totems and spells to manipulate the elements."
     };
 
-    // ================= SPRITE KOORDINATER FRÅN DINA 7 BILDER =================
+// Dynamiska sprites beroende på vald ras och kön
+    function getSpriteFileName(key) {
+        const gender = (currentSelection && currentSelection.gender) ? currentSelection.gender.toLowerCase() : 'male';
+        if (key === "Human" || key === "Dwarf" || key === "Night Elf" || key === "Gnome" || key === "High Order Skyborne") {
+            return `alliance_races_${gender}.png`;
+        }
+        if (key === "Orc" || key === "Undead" || key === "Tauren" || key === "Troll" || key === "Windshaper Skyborne") {
+            return `horde_races_${gender}.png`;
+        }
+        if (key === "Warrior" || key === "Hunter" || key === "Mage" || key === "Rogue") return "classes1.png";
+        if (key === "Priest" || key === "Warlock" || key === "Paladin") return "classes2.png";
+        if (key === "Druid" || key === "Shaman") return "classes3.png";
+        if (key === "Alliance") return "alliance.png";
+        if (key === "Horde") return "horde.png";
+        return "";
+    }
+
     const SPRITES = {
-        "Horde":    { file: "horde.png",    w: 112, h: 100, x: 0, y: 0, bgW: 112, bgH: 100 },
-        "Alliance": { file: "alliance.png", w: 112, h: 102, x: 0, y: 0, bgW: 112, bgH: 102 },
+        "Horde":    { w: 112, h: 100, x: 0, y: 0, bgW: 112, bgH: 100 },
+        "Alliance": { w: 112, h: 102, x: 0, y: 0, bgW: 112, bgH: 102 },
 
-        "Human":               { file: "alliance_races.png", w: 77, h: 80, x: 0, y: 0,   bgW: 77, bgH: 444 },
-        "Dwarf":               { file: "alliance_races.png", w: 77, h: 80, x: 0, y: 90,  bgW: 77, bgH: 444 },
-        "Night Elf":           { file: "alliance_races.png", w: 77, h: 80, x: 0, y: 180, bgW: 77, bgH: 444 },
-        "Gnome":               { file: "alliance_races.png", w: 77, h: 80, x: 0, y: 270, bgW: 77, bgH: 444 },
-        "High Order Skyborne": { file: "alliance_races.png", w: 77, h: 84, x: 0, y: 360, bgW: 77, bgH: 444 },
+        "Human":               { w: 77, h: 80, x: 0, y: 0,   bgW: 77, bgH: 444 },
+        "Dwarf":               { w: 77, h: 80, x: 0, y: 90,  bgW: 77, bgH: 444 },
+        "Night Elf":           { w: 77, h: 80, x: 0, y: 180, bgW: 77, bgH: 444 },
+        "Gnome":               { w: 77, h: 80, x: 0, y: 270, bgW: 77, bgH: 444 },
+        "High Order Skyborne": { w: 77, h: 84, x: 0, y: 360, bgW: 77, bgH: 444 },
 
-        "Orc":                 { file: "horde_races.png", w: 74, h: 78, x: 0, y: 0,   bgW: 74, bgH: 438 },
-        "Undead":              { file: "horde_races.png", w: 74, h: 78, x: 0, y: 90,  bgW: 74, bgH: 438 },
-        "Tauren":              { file: "horde_races.png", w: 74, h: 78, x: 0, y: 180, bgW: 74, bgH: 438 },
-        "Troll":               { file: "horde_races.png", w: 74, h: 78, x: 0, y: 270, bgW: 74, bgH: 438 },
-        "Windshaper Skyborne": { file: "horde_races.png", w: 74, h: 78, x: 0, y: 360, bgW: 74, bgH: 438 },
+        "Orc":                 { w: 74, h: 78, x: 0, y: 0,   bgW: 74, bgH: 438 },
+        "Undead":              { w: 74, h: 78, x: 0, y: 90,  bgW: 74, bgH: 438 },
+        "Tauren":              { w: 74, h: 78, x: 0, y: 180, bgW: 74, bgH: 438 },
+        "Troll":               { w: 74, h: 78, x: 0, y: 270, bgW: 74, bgH: 438 },
+        "Windshaper Skyborne": { w: 74, h: 78, x: 0, y: 360, bgW: 74, bgH: 438 },
 
-        "Warrior": { file: "classes1.png", w: 60, h: 58, x: 0,   y: 0, bgW: 299, bgH: 81 },
-        "Hunter":  { file: "classes1.png", w: 60, h: 58, x: 79,  y: 0, bgW: 299, bgH: 81 },
-        "Mage":    { file: "classes1.png", w: 64, h: 60, x: 155, y: 0, bgW: 299, bgH: 81 },
-        "Rogue":   { file: "classes1.png", w: 60, h: 58, x: 237, y: 0, bgW: 299, bgH: 81 },
+        "Warrior": { w: 60, h: 58, x: 0,   y: 0, bgW: 299, bgH: 81 },
+        "Hunter":  { w: 60, h: 58, x: 79,  y: 0, bgW: 299, bgH: 81 },
+        "Mage":    { w: 64, h: 60, x: 155, y: 0, bgW: 299, bgH: 81 },
+        "Rogue":   { w: 60, h: 58, x: 237, y: 0, bgW: 299, bgH: 81 },
 
-        "Priest":  { file: "classes2.png", w: 60, h: 58, x: 2,   y: 0, bgW: 223, bgH: 80 },
-        "Warlock": { file: "classes2.png", w: 60, h: 58, x: 81,  y: 0, bgW: 223, bgH: 80 },
-        "Paladin": { file: "classes2.png", w: 60, h: 58, x: 160, y: 0, bgW: 223, bgH: 80 },
+        "Priest":  { w: 60, h: 58, x: 2,   y: 0, bgW: 223, bgH: 80 },
+        "Warlock": { w: 60, h: 58, x: 81,  y: 0, bgW: 223, bgH: 80 },
+        "Paladin": { w: 60, h: 58, x: 160, y: 0, bgW: 223, bgH: 80 },
 
-        "Druid":   { file: "classes3.png", w: 60, h: 58, x: 3,   y: 1, bgW: 147, bgH: 81 },
-        "Shaman":  { file: "classes3.png", w: 60, h: 58, x: 83,  y: 1, bgW: 147, bgH: 81 }
+        "Druid":   { w: 60, h: 58, x: 3,   y: 1, bgW: 147, bgH: 81 },
+        "Shaman":  { w: 60, h: 58, x: 83,  y: 1, bgW: 147, bgH: 81 }
     };
 
-    function createSpriteHTML(key, targetSize = 54) {
+  function createSpriteHTML(key, targetSize = 54) {
         const s = SPRITES[key];
         if (!s) return '';
+        const fileName = getSpriteFileName(key);
         const scale = targetSize / s.w;
         const finalW = Math.round(s.w * scale);
         const finalH = Math.round(s.h * scale);
@@ -659,7 +676,7 @@
         return `<div class="icon-box" style="
             width: ${finalW}px;
             height: ${finalH}px;
-            background-image: url('${s.file}');
+            background-image: url('${fileName}');
             background-position: ${posX}px ${posY}px;
             background-size: ${bgW}px ${bgH}px;
         " title="${key}"></div>`;
@@ -750,6 +767,7 @@
         currentSelection.gender = gender;
         document.getElementById('gender-male').classList.toggle('selected', gender === 'Male');
         document.getElementById('gender-female').classList.toggle('selected', gender === 'Female');
+        renderBanners(); // <--- Lägg till denna rad så ikonen uppdateras direkt!
         update3DModel();
     }
 
