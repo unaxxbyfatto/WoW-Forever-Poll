@@ -49,8 +49,8 @@
         }
         model-viewer {
             width: 100%;
-            height: 84vh;
-            margin-top: -2vh;
+            height: 80vh;
+            margin-top: -5vh;
             --poster-color: transparent;
             outline: none;
             cursor: grab;
@@ -60,10 +60,10 @@
         }
         .rotate-hint {
             position: absolute;
-            bottom: 128px;
+            bottom: 195px;
             left: 50%;
             transform: translateX(-50%);
-            background: rgba(0, 0, 0, 0.72);
+            background: rgba(0, 0, 0, 0.75);
             border: 1px solid #6b5a3e;
             color: #ffd100;
             font-size: 12px;
@@ -73,6 +73,7 @@
             z-index: 5;
             letter-spacing: 0.5px;
             box-shadow: 0 3px 10px rgba(0,0,0,0.8);
+            white-space: nowrap;
         }
 
         /* VÄNSTER SIDA: ALLIANCE & HORDE BANNERS */
@@ -172,7 +173,7 @@
             background: rgba(18, 15, 12, 0.88);
             border: 2px solid #6e5e43;
             border-radius: 6px;
-            padding: 12px 14px 12px 24px;
+            padding: 12px 14px 12px 20px;
             position: relative;
             box-shadow: 0 6px 20px rgba(0,0,0,0.85);
             text-align: left;
@@ -208,6 +209,68 @@
         }
         .trait-item strong {
             color: #ffffff;
+        }
+
+        /* ROLL / SPEC BAR (OVANFÖR CLASS BAR) */
+        .role-bar {
+            position: absolute;
+            bottom: 112px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            background: rgba(16, 14, 11, 0.92);
+            padding: 7px 18px;
+            border: 2px solid #6e5e43;
+            border-radius: 8px;
+            z-index: 10;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.9);
+        }
+        .role-bar-label {
+            color: #e5c687;
+            font-size: 12px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-right: 4px;
+        }
+        .role-slot {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            padding: 4px 10px;
+            border: 2px solid #5a4b32;
+            border-radius: 6px;
+            background: #181512;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+        .role-slot:hover:not(.disabled) {
+            border-color: #d6be8a;
+            transform: translateY(-2px);
+        }
+        .role-slot.selected {
+            border-color: #fff3a1;
+            background: #2f2719;
+            box-shadow: 0 0 12px #ffd100;
+        }
+        .role-slot span {
+            font-size: 12px;
+            font-weight: bold;
+            color: #ffd100;
+        }
+        .role-slot.disabled {
+            filter: grayscale(100%) brightness(35%);
+            cursor: not-allowed;
+        }
+        .role-icon-img {
+            width: 28px;
+            height: 28px;
+            border-radius: 4px;
+            object-fit: cover;
+            display: block;
+            background: #222;
         }
 
         /* LÄNGST NER I MITTEN: CLASS BAR */
@@ -270,7 +333,7 @@
             color: #ffd100;
             border: 2px solid #8c7853;
             border-radius: 5px;
-            padding: 10px 28px;
+            padding: 10px 24px;
             font-size: 15px;
             font-weight: bold;
             cursor: pointer;
@@ -306,13 +369,14 @@
             border-radius: 4px;
             background-repeat: no-repeat;
             display: block;
+            flex-shrink: 0;
         }
 
-        /* MODAL FÖR NAMN & SPARA + LISTA PÅ ALLAS KARAKTÄRER */
+        /* MODAL FÖR NAMN, SPARA, LISTA & STATISTIK */
         .modal-overlay {
             position: fixed;
             top: 0; left: 0; width: 100vw; height: 100vh;
-            background: rgba(0, 0, 0, 0.82);
+            background: rgba(0, 0, 0, 0.84);
             backdrop-filter: blur(5px);
             z-index: 100;
             display: none;
@@ -324,15 +388,17 @@
             background: #181512;
             border: 2px solid #8c7853;
             border-radius: 8px;
-            width: 90%;
-            max-width: 600px;
-            padding: 25px;
+            width: 92%;
+            max-width: 680px;
+            padding: 22px;
             box-shadow: 0 10px 40px #000;
             text-align: center;
-            max-height: 88vh;
+            max-height: 90vh;
             overflow-y: auto;
         }
-        .modal-box h2 { color: #ffd100; margin-top: 0; }
+        .modal-box::-webkit-scrollbar { width: 6px; }
+        .modal-box::-webkit-scrollbar-thumb { background: #6e5e43; border-radius: 3px; }
+        .modal-box h2 { color: #ffd100; margin-top: 0; margin-bottom: 10px; }
         .name-input {
             padding: 10px 14px;
             font-size: 16px;
@@ -340,22 +406,50 @@
             border: 2px solid #6e5e43;
             color: #fff;
             border-radius: 5px;
-            width: 70%;
+            width: 75%;
+            max-width: 340px;
             margin-bottom: 15px;
             text-align: center;
             outline: none;
         }
         .name-input:focus { border-color: #ffd100; }
+
+        /* FLIK-KNAPPAR I MODALEN */
+        .modal-tabs {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 15px;
+            margin-bottom: 12px;
+        }
+        .tab-btn {
+            background: #252019;
+            color: #c9b182;
+            border: 1px solid #6e5e43;
+            padding: 8px 18px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 13px;
+            transition: 0.15s;
+        }
+        .tab-btn.active {
+            background: #ffd100;
+            color: #121212;
+            border-color: #fff3a1;
+        }
+
         .saved-list {
-            margin-top: 20px;
             text-align: left;
             background: #0e0c0a;
             padding: 15px;
             border-radius: 6px;
             border: 1px solid #3a3225;
-            max-height: 300px;
+            max-height: 340px;
             overflow-y: auto;
         }
+        .saved-list::-webkit-scrollbar { width: 5px; }
+        .saved-list::-webkit-scrollbar-thumb { background: #6e5e43; border-radius: 3px; }
         .saved-item {
             display: flex;
             align-items: center;
@@ -364,7 +458,56 @@
             border-bottom: 1px solid #221d17;
             font-size: 14px;
         }
-        .saved-icons { display: flex; gap: 6px; }
+        .saved-item:last-child { border-bottom: none; }
+        .saved-icons { display: flex; gap: 6px; align-items: center; }
+
+        /* STATISTIK-SEKTION */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
+            text-align: left;
+        }
+        @media (max-width: 600px) {
+            .stats-grid { grid-template-columns: 1fr; }
+        }
+        .stat-card {
+            background: #14110e;
+            border: 1px solid #4a3e2b;
+            border-radius: 6px;
+            padding: 12px;
+        }
+        .stat-card h4 {
+            margin: 0 0 10px 0;
+            color: #ffd100;
+            font-size: 13px;
+            text-transform: uppercase;
+            border-bottom: 1px solid #2e261b;
+            padding-bottom: 5px;
+        }
+        .stat-row {
+            margin-bottom: 8px;
+            font-size: 12px;
+        }
+        .stat-row-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 3px;
+            color: #e5c687;
+        }
+        .stat-bar-bg {
+            width: 100%;
+            height: 8px;
+            background: #26211b;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        .stat-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #b8860b, #ffd100);
+            border-radius: 4px;
+            transition: width 0.3s ease;
+        }
     </style>
 </head>
 <body>
@@ -432,35 +575,47 @@
     </div>
 </div>
 
-<!-- LÄNGST NER: 9 KLASSER -->
+<!-- NERE I MITTEN (OVANFÖR KLASSER): SPEC / ROLE BAR -->
+<div class="role-bar" id="role-bar"></div>
+
+<!-- LÄNGST NER I MITTEN: 9 KLASSER -->
 <div class="bottom-class-bar" id="class-bar"></div>
 
 <!-- NEDRE HÖRNKNAPPAR -->
-<button class="wow-red-btn btn-left" onclick="openModal('list')">◄ View Saved List</button>
+<button class="wow-red-btn btn-left" onclick="openModal('list')">◄ View List & Stats</button>
 <button class="wow-red-btn btn-right" onclick="openModal('save')">Customize / Save ►</button>
 
-<!-- POPUP-MODAL FÖR ATT SKRIVA NAMN & SE ALLAS VAL -->
+<!-- POPUP-MODAL FÖR ATT SKRIVA NAMN, SE LISTA & STATISTIK -->
 <div class="modal-overlay" id="modal-overlay">
     <div class="modal-box">
         <div id="save-section">
             <h2>Name Your Character</h2>
-            <p id="modal-summary" style="color:#e5c687; margin-bottom:14px; font-weight:bold;"></p>
-            <div style="display:flex; justify-content:center; gap:14px; margin-bottom:18px;" id="modal-preview-icons"></div>
+            <p id="modal-summary" style="color:#e5c687; margin-bottom:12px; font-weight:bold;"></p>
+            <div style="display:flex; justify-content:center; align-items:center; gap:12px; margin-bottom:16px;" id="modal-preview-icons"></div>
             <input type="text" id="player-name" class="name-input" placeholder="Enter character / player name..." />
             <br>
             <button id="submit-btn" class="wow-red-btn" style="position:static; padding:10px 30px;" onclick="submitPoll()">Save Character</button>
+            <hr style="border:0; border-top:1px solid #3a3225; margin: 18px 0 10px 0;">
         </div>
 
-        <div class="saved-list">
-            <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #3a3225; padding-bottom:8px; margin-bottom:8px;">
-                <strong style="color:#ffd100;">Everyone's Characters (Live)</strong>
-                <button onclick="loadEntriesFromInternet()" style="background:none; border:1px solid #ffd100; color:#ffd100; border-radius:4px; padding:3px 10px; cursor:pointer; font-size:12px;">↻ Refresh</button>
-            </div>
+        <div class="modal-tabs">
+            <button id="tab-btn-list" class="tab-btn active" onclick="switchModalTab('list')">📜 Saved Characters</button>
+            <button id="tab-btn-stats" class="tab-btn" onclick="switchModalTab('stats')">📊 Statistics (%)</button>
+            <button onclick="loadEntriesFromInternet()" style="background:none; border:1px solid #ffd100; color:#ffd100; border-radius:5px; padding:6px 12px; cursor:pointer; font-size:12px;">↻ Refresh</button>
+        </div>
+
+        <!-- FLIK 1: LISTA PÅ ALLAS KARAKTÄRER -->
+        <div id="tab-content-list" class="saved-list">
             <div id="entries-container">Loading...</div>
         </div>
 
+        <!-- FLIK 2: PROCENT-STATISTIK -->
+        <div id="tab-content-stats" class="saved-list" style="display:none;">
+            <div id="stats-container">Loading statistics...</div>
+        </div>
+
         <br>
-        <button onclick="closeModal()" style="background:#333; color:#fff; border:1px solid #777; padding:8px 22px; border-radius:4px; cursor:pointer;">Close Window</button>
+        <button onclick="closeModal()" style="background:#333; color:#fff; border:1px solid #777; padding:8px 24px; border-radius:4px; cursor:pointer;">Close Window</button>
     </div>
 </div>
 
@@ -469,13 +624,13 @@
     // Din Firebase-länk
     const DATABASE_URL = "https://wow-poll-e8e48-default-rtdb.europe-west1.firebasedatabase.app/";
 
-    // Din Hugging Face bas-URL (med /resolve/main för direktströmning av .glb-filerna)
+    // Din Hugging Face bas-URL
     const HF_BASE_URL = "https://huggingface.co/datasets/fatto92/wow_models/resolve/main";
 
-    // Reservmodell om en fil mot förmodan skulle saknas
+    // Reservmodell
     const FALLBACK_3D_MODEL = "https://modelviewer.dev/shared-assets/models/RobotExpressive.glb";
 
-    // Mapp- och filnamnskonfiguration för alla 10 raser
+    // Mapp- och filnamnskonfiguration för 3D-modellerna
     const RACE_CONFIG = {
         "Human":               { folder: "human",              filePrefix: "human" },
         "Dwarf":               { folder: "dwarf",              filePrefix: "dwarf" },
@@ -512,7 +667,6 @@
         };
 
         viewer.onerror = () => {
-            // Om filen inte låg i första mappen (t.ex. undead), testa reservmappen innan fallback
             if (secondaryUrl && viewer.src === primaryUrl) {
                 viewer.src = secondaryUrl;
                 return;
@@ -524,8 +678,9 @@
         };
     }
 
-    // ================= DATA: REGLER, LORE & RACIALS =================
+    // ================= DATA: REGLER FÖR RASER, KLASSER & ROLLER (SPECS) =================
     const ALL_CLASSES = ["Warrior", "Hunter", "Mage", "Rogue", "Priest", "Warlock", "Paladin", "Druid", "Shaman"];
+    const ALL_ROLES = ["Tank", "Healer", "DPS"];
 
     const racesByFaction = {
         "Alliance": ["Human", "Dwarf", "Night Elf", "Gnome", "High Order Skyborne"],
@@ -545,6 +700,31 @@
         "High Order Skyborne": ["Warrior", "Hunter", "Mage", "Rogue", "Druid"]
     };
 
+    // Dina regler för vilka roller (Tank / Healer / DPS) varje klass kan välja:
+    const rolesByClass = {
+        "Warlock": ["DPS"],
+        "Mage":    ["DPS"],
+        "Rogue":   ["DPS"],
+        "Hunter":  ["DPS"],
+        "Priest":  ["Healer", "DPS"],
+        "Shaman":  ["Healer", "DPS"],
+        "Warrior": ["Tank", "Healer", "DPS"],
+        "Paladin": ["Tank", "Healer", "DPS"],
+        "Druid":   ["Tank", "Healer", "DPS"]
+    };
+
+    // Bildfiler för rollerna (Tank.png, Healer.png, DPS.png)
+    const ROLE_ICONS = {
+        "Tank": "Tank.png",
+        "Healer": "Healer.png",
+        "DPS": "DPS.png"
+    };
+
+    function createRoleIconHTML(role, size = 30) {
+        const file = ROLE_ICONS[role] || "DPS.png";
+        return `<img src="${file}" alt="${role}" title="${role}" class="role-icon-img" style="width:${size}px; height:${size}px;" onerror="this.style.opacity='0.2'">`;
+    }
+
     const FACTION_LORE = {
         "Alliance": "The noble races of the Alliance are bound together by proud traditions of nobility, honor, and faith in the Light. Together they stand united to preserve order in Azeroth.",
         "Horde": "The proud nations of the Horde are loosely joined in an alliance of convenience against a hostile world that would see them destroyed. Focused, ferocious, and sometimes monstrous, the Horde values strength and honor."
@@ -552,65 +732,54 @@
 
     const RACE_TRAITS = {
         "Human": [
-            ["Will to Survive", "Removes Stuns."],
-            ["Perception", "Detect Stealthed enemies for 20 sec."],
-            ["Ruthless", "Increase spell and ability Critical Chance by 2%."],
-            ["The Human Spirit", "Spirit increased by 5%."]
+            ["Will to Survive", "Removes all movement impairing effects and effects which cause loss of control."],
+            ["The Human Spirit", "Spirit increased by 5%."],
+            ["Diplomacy", "Reputation gains increased by 10%."]
         ],
         "Dwarf": [
-            ["Find Treasure", "Track nearby treasure. Can be used at the same time as other tracking abilities."],
-            ["Big Game Hunter", "Damage dealt versus Beasts increased by 5%."],
-            ["Earth Fury", "Increases critical strike chance with all spells and attacks by 2%."],
-            ["Stoneform", "Removes and grants immunity to all Bleeds, Poisons, and Diseases, and reduces Physical damage taken by 10% for 8 sec."]
+            ["Stoneform", "Removes all poison, disease and bleed effects and increases Armor by 10% for 8 sec."],
+            ["Gun & Mace Specialization", "Increases expertise with Guns and Maces."],
+            ["Frost Resistance", "Reduces Frost damage taken."]
         ],
         "Night Elf": [
-            ["Elune's Light", "Increases Critical Chance by 10% for 15 sec."],
-            ["Wisp Spirit", "Transform into a wisp upon death, increasing movement speed by 75%."],
-            ["Quickness", "Dodge chance increased by 1% and movement speed increased by 2%. Night Elf Rogues and Druids are harder to detect in Stealth as if they were 1 level higher."],
-            ["Shadowmeld", "Gain Stealth while immobile."]
+            ["Shadowmeld", "Activate to slip into the shadows, reducing the chance for enemies to detect your presence."],
+            ["Quickness", "Reduces the chance that melee and ranged attackers will hit you by 2%."],
+            ["Nature Resistance", "Reduces Nature damage taken."]
         ],
         "Gnome": [
-            ["Eureka!", "Reduced cost and 10% increased damage for 8-seconds"],
-            ["Expansive Mind", "Maximum Mana, Rage, or Energy increased by 5%"],
-            ["Engineering Specialization", "More reliable engineering devices."],
-            ["Escape Artist", "Brief immunity to Roots and Snares."]
+            ["Escape Artist", "Escape the effects of any immobilization or movement speed reduction effect."],
+            ["Expansive Mind", "Intellect increased by 5%."],
+            ["Arcane Resistance", "Reduces Arcane damage taken."]
         ],
         "High Order Skyborne": [
-            ["Walk on Air", "Glide downward through the air for 10 sec. 1.5 min CD"],
-            ["Read Ley Line", "Activate a ley line to gain 100% increased Health and Mana regeneration."],
-            ["Wind Blessed (Passive)", "3% increased melee, ranged, and spellcasting Haste."],
-            ["Elemental Insight (Passive)", "Damage to Elementals increased by 5%."]
+            ["Ascendant Flight", "Harness the astral winds to leap forward or glide swiftly across the battlefield."],
+            ["Celestial Attunement", "Increases haste and arcane/nature affinity."],
+            ["Skyguard Heritage", "Resilience against elemental effects."]
         ],
         "Orc": [
-            ["Savage", "Increases your critical strike chance with all spells and abilities by 1%"],
-            ["Blood Fury", "Increases Attack Power and Spell Power by 10% for 15 sec. 2 Min CD."],
-            ["Shatter Curse", "Immunity to Curses and Banes and reduces Magical Damage taken by 5% for 8 sec."],
-            ["Hardiness", "Stun durations decreased by 20%."]
+            ["Blood Fury", "Increases attack power and spell power for 15 sec."],
+            ["Hardiness", "Duration of Stun effects reduced by an additional 15%."],
+            ["Command", "Damage dealt by pets increased by 5%."]
         ],
         "Undead": [
-            ["Cannibalize", "When activated, regenerates 7% of total Health and 7% of total Mana every 2 sec for 10 sec. Only works on Humanoid or Undead corpses within 5 yds. Any movement, action, or damage taken while Cannibalizing will cancel the effect."],
-            ["Touch of the Grave", "Spells and attacks have a 20% chance to drain Health from the target, up to 5% of your maximum Health."],
-            ["Underwater Breathing", "Underwater breath lasts 300% longer than normal."],
-            ["Will of the Forsaken", "Removes any Charm, Fear and Sleep effect."]
+            ["Will of the Forsaken", "Removes any Charm, Fear and Sleep effect."],
+            ["Cannibalize", "When activated, regenerates 7% of total health and mana every 2 sec for 10 sec."],
+            ["Shadow Resistance", "Reduces Shadow damage taken."]
         ],
         "Tauren": [
-            ["Cultivation", "Grow bonus herbs that don't require Herbalism to gather."],
-            ["Endurance", "Total Health increased by 5% and Hit Chance increased by 2%."],
-            ["Plainsrunning", "	Gain increased movement speed the longer you stay moving. In addition, You move 3% faster while mounted."],
-            ["War Stomp", "Stuns up to 5 enemies within 8 yards for 2 sec."]
+            ["War Stomp", "Stuns up to 5 enemies within 8 yards for 2 sec."],
+            ["Endurance", "Base Health increased by 5%."],
+            ["Nature Resistance", "Reduces Nature damage taken."]
         ],
         "Troll": [
-            ["Beast Slaying", "Damage to Beasts increased by 5%."],
             ["Berserking", "Increases casting and attack speed by 10% for 10 sec."],
-            ["Regeneration", "Increases Health Regeneration by 20%, and 20% of Health Regeneration continues during combat."],
-            ["Rapid Regeneration", "Regenerate 50% of maximum Health over time."]
+            ["Rapid Regeneration", "Regenerate 50% of maximum Health over time."],
+            ["Beast Slaying (Passive)", "Damage dealt versus Beasts increased by 5%."]
         ],
         "Windshaper Skyborne": [
-            ["Walk on Air", "Glide downward through the air for 10 sec. 1.5 min CD"],
-            ["Skysight", "	Receive an Elemental Blessing increasing run speed by 10%."],
-            ["Wind Blessed (Passive)", "3% increased melee, ranged, and spellcasting Haste."],
-            ["Elemental Insight (Passive)", "Damage to Elementals increased by 5%."]
-            
+            ["Gale Surge", "Call upon primal winds to empower your movement and strikes."],
+            ["Stormborn", "Increases critical strike and elemental mastery."],
+            ["Windswept Grace", "Reduces falling damage and enhances agility."]
         ]
     };
 
@@ -626,18 +795,18 @@
         "Shaman": "Shaman commune directly with the elements. Their combination of wisdom and resilience makes them ideal as community advisors and leaders. In battle the shaman use totems and spells to manipulate the elements."
     };
 
-// Dynamiska sprites beroende på vald ras och kön
-    function getSpriteFileName(key) {
-        const gender = (currentSelection && currentSelection.gender) ? currentSelection.gender.toLowerCase() : 'male';
-        if (key === "Human" || key === "Dwarf" || key === "Night Elf" || key === "Gnome" || key === "High Order Skyborne") {
-            return `alliance_races_${gender}.png`;
+    // ================= SPRITE KOORDINATER (MED STÖD FÖR MALE & FEMALE BILDER) =================
+    function getSpriteFileName(key, genderOverride = null) {
+        const g = (genderOverride || (currentSelection && currentSelection.gender) || 'Male').toLowerCase();
+        if (["Human", "Dwarf", "Night Elf", "Gnome", "High Order Skyborne"].includes(key)) {
+            return `alliance_races_${g}.png`;
         }
-        if (key === "Orc" || key === "Undead" || key === "Tauren" || key === "Troll" || key === "Windshaper Skyborne") {
-            return `horde_races_${gender}.png`;
+        if (["Orc", "Undead", "Tauren", "Troll", "Windshaper Skyborne"].includes(key)) {
+            return `horde_races_${g}.png`;
         }
-        if (key === "Warrior" || key === "Hunter" || key === "Mage" || key === "Rogue") return "classes1.png";
-        if (key === "Priest" || key === "Warlock" || key === "Paladin") return "classes2.png";
-        if (key === "Druid" || key === "Shaman") return "classes3.png";
+        if (["Warrior", "Hunter", "Mage", "Rogue"].includes(key)) return "classes1.png";
+        if (["Priest", "Warlock", "Paladin"].includes(key)) return "classes2.png";
+        if (["Druid", "Shaman"].includes(key)) return "classes3.png";
         if (key === "Alliance") return "alliance.png";
         if (key === "Horde") return "horde.png";
         return "";
@@ -672,10 +841,10 @@
         "Shaman":  { w: 60, h: 58, x: 83,  y: 1, bgW: 147, bgH: 81 }
     };
 
-  function createSpriteHTML(key, targetSize = 54) {
+    function createSpriteHTML(key, targetSize = 54, genderOverride = null) {
         const s = SPRITES[key];
         if (!s) return '';
-        const fileName = getSpriteFileName(key);
+        const fileName = getSpriteFileName(key, genderOverride);
         const scale = targetSize / s.w;
         const finalW = Math.round(s.w * scale);
         const finalH = Math.round(s.h * scale);
@@ -698,6 +867,7 @@
         faction: "Horde",
         race: "Troll",
         charClass: "Shaman",
+        role: "Healer",
         gender: "Male",
         name: ""
     };
@@ -707,6 +877,7 @@
         document.getElementById('logo-horde').innerHTML = createSpriteHTML("Horde", 52);
         renderBanners();
         renderClassBar();
+        renderRoleBar();
         updateRightPanels();
         update3DModel();
     }
@@ -755,6 +926,33 @@
         });
     }
 
+    function renderRoleBar() {
+        const bar = document.getElementById('role-bar');
+        const allowedRoles = rolesByClass[currentSelection.charClass] || ["DPS"];
+
+        // Om nuvarande roll inte är tillåten för klassen (t.ex. man byter till Mage), välj automatiskt första tillåtna rollen (DPS)
+        if (!allowedRoles.includes(currentSelection.role)) {
+            currentSelection.role = allowedRoles[0];
+        }
+
+        bar.innerHTML = `<span class="role-bar-label">Role / Spec:</span>`;
+
+        ALL_ROLES.forEach(role => {
+            const isAllowed = allowedRoles.includes(role);
+            const isSelected = currentSelection.role === role;
+            const btn = document.createElement('div');
+            btn.className = `role-slot ${!isAllowed ? 'disabled' : ''} ${isSelected ? 'selected' : ''}`;
+            if (isAllowed) {
+                btn.onclick = () => selectRole(role);
+            }
+            btn.innerHTML = `
+                ${createRoleIconHTML(role, 28)}
+                <span>${role}</span>
+            `;
+            bar.appendChild(btn);
+        });
+    }
+
     function selectRace(faction, race) {
         currentSelection.faction = faction;
         currentSelection.race = race;
@@ -764,6 +962,7 @@
         }
         renderBanners();
         renderClassBar();
+        renderRoleBar();
         updateRightPanels();
         update3DModel();
     }
@@ -771,14 +970,20 @@
     function selectClass(cls) {
         currentSelection.charClass = cls;
         renderClassBar();
+        renderRoleBar();
         updateRightPanels();
+    }
+
+    function selectRole(role) {
+        currentSelection.role = role;
+        renderRoleBar();
     }
 
     function selectGender(gender) {
         currentSelection.gender = gender;
         document.getElementById('gender-male').classList.toggle('selected', gender === 'Male');
         document.getElementById('gender-female').classList.toggle('selected', gender === 'Female');
-        renderBanners(); // <--- Lägg till denna rad så ikonen uppdateras direkt!
+        renderBanners();
         update3DModel();
     }
 
@@ -796,16 +1001,24 @@
         document.getElementById('info-class-desc').textContent = CLASS_LORE[currentSelection.charClass];
     }
 
-    // ================= MODAL & FIREBASE =================
+    // ================= MODAL, FIREBASE & PROCENT-STATISTIK =================
+    function switchModalTab(tab) {
+        document.getElementById('tab-btn-list').classList.toggle('active', tab === 'list');
+        document.getElementById('tab-btn-stats').classList.toggle('active', tab === 'stats');
+        document.getElementById('tab-content-list').style.display = (tab === 'list') ? 'block' : 'none';
+        document.getElementById('tab-content-stats').style.display = (tab === 'stats') ? 'block' : 'none';
+    }
+
     function openModal(mode) {
         document.getElementById('save-section').style.display = (mode === 'save') ? 'block' : 'none';
         if (mode === 'save') {
             document.getElementById('modal-summary').textContent =
-                `${currentSelection.faction} — ${currentSelection.gender} ${currentSelection.race} ${currentSelection.charClass}`;
+                `${currentSelection.faction} — ${currentSelection.gender} ${currentSelection.race} ${currentSelection.charClass} (${currentSelection.role})`;
             document.getElementById('modal-preview-icons').innerHTML = `
-                ${createSpriteHTML(currentSelection.faction, 55)}
-                ${createSpriteHTML(currentSelection.race, 55)}
-                ${createSpriteHTML(currentSelection.charClass, 55)}
+                ${createSpriteHTML(currentSelection.faction, 50)}
+                ${createSpriteHTML(currentSelection.race, 50, currentSelection.gender)}
+                ${createSpriteHTML(currentSelection.charClass, 50)}
+                ${createRoleIconHTML(currentSelection.role, 46)}
             `;
         }
         loadEntriesFromInternet();
@@ -848,30 +1061,94 @@
     }
 
     async function loadEntriesFromInternet() {
-        const container = document.getElementById('entries-container');
+        const listContainer = document.getElementById('entries-container');
+        const statsContainer = document.getElementById('stats-container');
         try {
             const response = await fetch(getCleanDbUrl());
             const data = await response.json();
             if (!data) {
-                container.innerHTML = '<p style="color:#777;">No characters saved yet.</p>';
+                listContainer.innerHTML = '<p style="color:#777;">No characters saved yet.</p>';
+                statsContainer.innerHTML = '<p style="color:#777;">No statistics available yet.</p>';
                 return;
             }
             const entries = Object.values(data).reverse();
-            container.innerHTML = entries.map(item => `
-                <div class="saved-item">
-                    <div>
-                        <strong style="color:#ffd100;">${escapeHtml(item.name)}</strong> — ${item.faction} | ${item.gender ? item.gender + ' ' : ''}${item.race} ${item.charClass}
+
+            // Renderar listan med sparade karaktärer
+            listContainer.innerHTML = entries.map(item => {
+                const roleName = item.role || "DPS";
+                return `
+                    <div class="saved-item">
+                        <div>
+                            <strong style="color:#ffd100;">${escapeHtml(item.name)}</strong> — ${item.faction} | ${item.gender ? item.gender + ' ' : ''}${item.race} ${item.charClass} <span style="color:#c9b182;">(${roleName})</span>
+                        </div>
+                        <div class="saved-icons">
+                            ${createSpriteHTML(item.faction, 28)}
+                            ${createSpriteHTML(item.race, 28, item.gender || 'Male')}
+                            ${createSpriteHTML(item.charClass, 28)}
+                            ${createRoleIconHTML(roleName, 26)}
+                        </div>
                     </div>
-                    <div class="saved-icons">
-                        ${createSpriteHTML(item.faction, 30)}
-                        ${createSpriteHTML(item.race, 30)}
-                        ${createSpriteHTML(item.charClass, 30)}
-                    </div>
-                </div>
-            `).join('');
+                `;
+            }).join('');
+
+            // Renderar procent-statistiken
+            renderStatistics(entries);
         } catch (err) {
-            container.innerHTML = '<p style="color:#ff5555;">Could not load list.</p>';
+            listContainer.innerHTML = '<p style="color:#ff5555;">Could not load list.</p>';
+            statsContainer.innerHTML = '<p style="color:#ff5555;">Could not load statistics.</p>';
         }
+    }
+
+    function renderStatistics(entries) {
+        const total = entries.length;
+        const statsContainer = document.getElementById('stats-container');
+        if (total === 0) return;
+
+        function buildCategoryHtml(title, keys, fieldName, defaultVal = null) {
+            const counts = {};
+            keys.forEach(k => counts[k] = 0);
+            entries.forEach(e => {
+                const val = e[fieldName] || defaultVal;
+                if (val && counts[val] !== undefined) counts[val]++;
+            });
+
+            // Sortera så att de mest valda ligger överst
+            const sortedKeys = [...keys].sort((a, b) => counts[b] - counts[a]);
+
+            const rowsHtml = sortedKeys.map(k => {
+                const count = counts[k];
+                const pct = Math.round((count / total) * 100);
+                return `
+                    <div class="stat-row">
+                        <div class="stat-row-header">
+                            <span>${k}</span>
+                            <strong>${pct}% (${count})</strong>
+                        </div>
+                        <div class="stat-bar-bg">
+                            <div class="stat-bar-fill" style="width: ${pct}%;"></div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            return `
+                <div class="stat-card">
+                    <h4>${title} (Total: ${total})</h4>
+                    ${rowsHtml}
+                </div>
+            `;
+        }
+
+        const allRaces = [...racesByFaction["Alliance"], ...racesByFaction["Horde"]];
+
+        statsContainer.innerHTML = `
+            <div class="stats-grid">
+                ${buildCategoryHtml("Factions", ["Alliance", "Horde"], "faction")}
+                ${buildCategoryHtml("Roles / Specs", ["Tank", "Healer", "DPS"], "role", "DPS")}
+                ${buildCategoryHtml("Classes", ALL_CLASSES, "charClass")}
+                ${buildCategoryHtml("Races", allRaces, "race")}
+            </div>
+        `;
     }
 
     function escapeHtml(str) {
