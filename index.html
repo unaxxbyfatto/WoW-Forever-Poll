@@ -7,6 +7,44 @@
     <!-- Googles 3D-motor för .glb/.gltf-modeller -->
     <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.4.0/model-viewer.min.js"></script>
     <style>
+        /* SPEC BAR (PRECIS OVANFÖR ROLE BAR) */
+        .spec-bar {
+            position: absolute;
+            bottom: 168px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: rgba(16, 14, 11, 0.92);
+            padding: 7px 18px;
+            border: 2px solid #6e5e43;
+            border-radius: 8px;
+            z-index: 10;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.9);
+        }
+        /* Flytta upp 3D-hinten lite så den inte täcks av den nya spec-raden */
+        .rotate-hint {
+            bottom: 228px !important;
+        }
+        @media (max-width: 900px) {
+            .spec-bar {
+                position: relative;
+                bottom: auto;
+                left: auto;
+                transform: none;
+                order: 4;
+                width: 94%;
+                max-width: 440px;
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 8px;
+                padding: 8px 10px;
+            }
+            .rotate-hint {
+                bottom: 8px !important;
+            }
+        }
         /* ================= MOBILANPASSNING (SKÄRMAR UNDER 900px) ================= */
         @media (max-width: 900px) {
             body {
@@ -834,6 +872,8 @@
 </div>
 
 <!-- NERE I MITTEN (OVANFÖR KLASSER): SPEC / ROLE BAR -->
+<!-- NERE I MITTEN (OVANFÖR ROLE BAR): SPEC BAR -->
+<div class="spec-bar" id="spec-bar"></div>
 <div class="role-bar" id="role-bar"></div>
 
 <!-- LÄNGST NER I MITTEN: 9 KLASSER -->
@@ -960,6 +1000,61 @@
 
     // Dina regler för vilka roller (Tank / Healer / DPS) varje klass kan välja:
     const rolesByClass = {
+        // Alla specs per klass och vilken Role de automatiskt väljer:
+    const specsByClass = {
+        "Warrior": [
+            { name: "Arms",         role: "DPS",    icon: "Arms.png" },
+            { name: "Fury",         role: "DPS",    icon: "Fury.png" },
+            { name: "Protection",   role: "Tank",   icon: "Protection.png" }
+        ],
+        "Hunter": [
+            { name: "Beast Mastery", role: "DPS",   icon: "Beast_Mastery.png" },
+            { name: "Marksmanship",  role: "DPS",   icon: "Marksmanship.png" },
+            { name: "Survival",      role: "DPS",   icon: "Survival.png" }
+        ],
+        "Mage": [
+            { name: "Arcane",       role: "DPS",    icon: "Arcane.png" },
+            { name: "Fire",         role: "DPS",    icon: "Fire.png" },
+            { name: "Frost",        role: "DPS",    icon: "Frost.png" }
+        ],
+        "Rogue": [
+            { name: "Assassination", role: "DPS",   icon: "Assassination.png" },
+            { name: "Combat",        role: "DPS",   icon: "Combat.png" },
+            { name: "Subtlety",      role: "DPS",   icon: "Subtlety.png" }
+        ],
+        "Priest": [
+            { name: "Discipline",   role: "Healer", icon: "Discipline.png" },
+            { name: "Holy",         role: "Healer", icon: "Holy.png" },
+            { name: "Shadow",       role: "DPS",    icon: "Shadow.png" }
+        ],
+        "Warlock": [
+            { name: "Affliction",   role: "DPS",    icon: "Affliction.png" },
+            { name: "Demonology",   role: "DPS",    icon: "Demonology.png" },
+            { name: "Destruction",  role: "DPS",    icon: "Destruction.png" }
+        ],
+        "Paladin": [
+            { name: "Holy",         role: "Healer", icon: "Holy.png" },
+            { name: "Protection",   role: "Tank",   icon: "Protection.png" },
+            { name: "Retribution",  role: "DPS",    icon: "Retribution.png" }
+        ],
+        "Druid": [
+            { name: "Balance",      role: "DPS",    icon: "Balance.png" },
+            { name: "Feral",        role: "Tank",   icon: "Feral.png" },
+            { name: "Restoration",  role: "Healer", icon: "Restoration.png" }
+        ],
+        "Shaman": [
+            { name: "Elemental",    role: "DPS",    icon: "Elemental.png" },
+            { name: "Enhancement",  role: "DPS",    icon: "Enhancement.png" },
+            { name: "Restoration",  role: "Healer", icon: "Restoration.png" }
+        ]
+    };
+
+    function createSpecIconHTML(specName, charClass = currentSelection.charClass, size = 28) {
+        const specs = specsByClass[charClass] || [];
+        const found = specs.find(s => s.name === specName);
+        const file = found ? found.icon : `${specName.replace(/\s+/g, '_')}.png`;
+        return `<img src="${file}" alt="${specName}" title="${specName}" class="role-icon-img" style="width:${size}px; height:${size}px;" onerror="this.style.opacity='0.2'">`;
+    }
         "Warlock": ["DPS"],
         "Mage":    ["DPS"],
         "Rogue":   ["DPS"],
@@ -1130,58 +1225,50 @@
         name: ""
     };
 
+    // Lägg till standard-spec i currentSelection
+    currentSelection.spec = "Restoration";
+
     function initScreen() {
         document.getElementById('logo-alliance').innerHTML = createSpriteHTML("Alliance", 52);
         document.getElementById('logo-horde').innerHTML = createSpriteHTML("Horde", 52);
         renderBanners();
         renderClassBar();
+        renderSpecBar();
         renderRoleBar();
         updateRightPanels();
         update3DModel();
     }
 
-    function renderBanners() {
-        const aList = document.getElementById('alliance-races-list');
-        const hList = document.getElementById('horde-races-list');
-        aList.innerHTML = '';
-        hList.innerHTML = '';
+    function renderSpecBar(highlightWinner = false) {
+        const bar = document.getElementById('spec-bar');
+        const specs = specsByClass[currentSelection.charClass] || [];
 
-        racesByFaction["Alliance"].forEach(race => {
-            const div = document.createElement('div');
-            div.className = `race-slot ${currentSelection.race === race ? 'selected' : ''}`;
-            div.onclick = () => selectRace("Alliance", race);
-            div.innerHTML = createSpriteHTML(race, 56);
-            aList.appendChild(div);
-        });
+        // Om nuvarande spec inte hör till klassen, välj första specen och sätt dess Role automatiskt
+        if (!specs.some(s => s.name === currentSelection.spec)) {
+            currentSelection.spec = specs[0].name;
+            currentSelection.role = specs[0].role;
+        }
 
-        racesByFaction["Horde"].forEach(race => {
-            const div = document.createElement('div');
-            div.className = `race-slot ${currentSelection.race === race ? 'selected' : ''}`;
-            div.onclick = () => selectRace("Horde", race);
-            div.innerHTML = createSpriteHTML(race, 56);
-            hList.appendChild(div);
+        bar.innerHTML = `<span class="role-bar-label">Spec:</span>`;
+
+        specs.forEach(s => {
+            const isSelected = currentSelection.spec === s.name;
+            const btn = document.createElement('div');
+            btn.className = `role-slot ${isSelected ? 'selected' : ''} ${(isSelected && highlightWinner) ? 'winner-glow' : ''}`;
+            btn.onclick = () => selectSpec(s.name, s.role);
+            btn.innerHTML = `
+                ${createSpecIconHTML(s.name, currentSelection.charClass, 28)}
+                <span>${s.name}</span>
+            `;
+            bar.appendChild(btn);
         });
     }
 
-    function renderClassBar() {
-        const bar = document.getElementById('class-bar');
-        bar.innerHTML = '';
-        const allowedClasses = classesByRace[currentSelection.race] || [];
-
-        ALL_CLASSES.forEach(cls => {
-            const isAllowed = allowedClasses.includes(cls);
-            const isSelected = currentSelection.charClass === cls;
-            const slot = document.createElement('div');
-            slot.className = `class-slot ${!isAllowed ? 'disabled' : ''} ${isSelected ? 'selected' : ''}`;
-            if (isAllowed) {
-                slot.onclick = () => selectClass(cls);
-            }
-            slot.innerHTML = `
-                <div class="class-icon-wrap">${createSpriteHTML(cls, 46)}</div>
-                <span>${cls}</span>
-            `;
-            bar.appendChild(slot);
-        });
+    function selectSpec(specName, autoRole) {
+        currentSelection.spec = specName;
+        currentSelection.role = autoRole; // Väljer automatiskt rätt Role!
+        renderSpecBar();
+        renderRoleBar(true); // Liten glöd på rollen som valdes automatiskt
     }
 
     let isRollingRole = false;
@@ -1194,7 +1281,7 @@
             currentSelection.role = allowedRoles[0];
         }
 
-        bar.innerHTML = `<span class="role-bar-label">Role / Spec:</span>`;
+        bar.innerHTML = `<span class="role-bar-label">Role:</span>`;
 
         ALL_ROLES.forEach(role => {
             const isAllowed = allowedRoles.includes(role);
@@ -1211,10 +1298,9 @@
             bar.appendChild(btn);
         });
 
-        // Knappen för "Can't choose role, help me!"
         const randBtn = document.createElement('div');
         randBtn.className = 'random-role-btn';
-        randBtn.title = "Can't choose role? Click to roll!";
+        randBtn.title = "Can't choose spec/role? Click to roll!";
         randBtn.onclick = () => rollRandomRole();
         randBtn.innerHTML = `
             <img id="random-role-img" src="Cant_choose_role_help_me.png" alt="?" class="role-icon-img" style="width:28px; height:28px;" onerror="this.style.opacity='0.3'">
@@ -1230,18 +1316,20 @@
         const img = document.getElementById('random-role-img');
         if (img) {
             img.classList.remove('spin-anim');
-            void img.offsetWidth; // Startar om animationen
+            void img.offsetWidth;
             img.classList.add('spin-anim');
         }
 
-        const allowedRoles = rolesByClass[currentSelection.charClass] || ["DPS"];
+        const specs = specsByClass[currentSelection.charClass] || [];
 
         setTimeout(() => {
-            // Slumpa bland de tillåtna rollerna (För Mage/Warlock/Rogue/Hunter blir det alltid DPS!)
-            const randomIndex = Math.floor(Math.random() * allowedRoles.length);
-            currentSelection.role = allowedRoles[randomIndex];
+            // Slumpar en av klassens specs och sätter dess Role automatiskt!
+            const randomSpec = specs[Math.floor(Math.random() * specs.length)];
+            currentSelection.spec = randomSpec.name;
+            currentSelection.role = randomSpec.role;
             isRollingRole = false;
-            renderRoleBar(true); // true = aktiverar den lysande effekten runt vinnarrollen!
+            renderSpecBar(true);
+            renderRoleBar(true);
         }, 800);
     }
 
@@ -1254,6 +1342,7 @@
         }
         renderBanners();
         renderClassBar();
+        renderSpecBar();
         renderRoleBar();
         updateRightPanels();
         update3DModel();
@@ -1261,7 +1350,11 @@
 
     function selectClass(cls) {
         currentSelection.charClass = cls;
+        const specs = specsByClass[cls] || [];
+        currentSelection.spec = specs[0].name;
+        currentSelection.role = specs[0].role;
         renderClassBar();
+        renderSpecBar();
         renderRoleBar();
         updateRightPanels();
     }
