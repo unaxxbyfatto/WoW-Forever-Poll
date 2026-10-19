@@ -1288,14 +1288,7 @@
 
     function renderRoleBar(highlightWinner = false) {
         const bar = document.getElementById('role-bar');
-        const specs = specsByClass[currentSelection.charClass] || [];
-        const activeSpec = specs.find(s => s.name === currentSelection.spec);
-
-        let allowedRoles = activeSpec ? [activeSpec.role] : ["DPS"];
-
-        if (currentSelection.charClass === "Druid" && currentSelection.spec === "Feral") {
-            allowedRoles = ["Tank", "DPS"];
-        }
+        const allowedRoles = rolesByClass[currentSelection.charClass] || ["DPS"];
 
         if (!allowedRoles.includes(currentSelection.role)) {
             currentSelection.role = allowedRoles[0];
@@ -1318,6 +1311,7 @@
             bar.appendChild(btn);
         });
 
+        // "Help me!" slump-knapp
         const randBtn = document.createElement('div');
         randBtn.className = 'random-role-btn';
         randBtn.title = "Can't choose spec/role? Click to roll!";
