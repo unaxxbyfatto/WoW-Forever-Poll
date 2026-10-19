@@ -7,246 +7,6 @@
     <!-- Googles 3D-motor för .glb/.gltf-modeller -->
     <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.4.0/model-viewer.min.js"></script>
     <style>
-        /* SPEC BAR (PRECIS OVANFÖR ROLE BAR) */
-        .spec-bar {
-            position: absolute;
-            bottom: 168px;
-            left: 50%;
-            transform: translateX(-50%);
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            background: rgba(16, 14, 11, 0.92);
-            padding: 7px 18px;
-            border: 2px solid #6e5e43;
-            border-radius: 8px;
-            z-index: 10;
-            box-shadow: 0 6px 20px rgba(0,0,0,0.9);
-        }
-        /* Flytta upp 3D-hinten lite så den inte täcks av den nya spec-raden */
-        .rotate-hint {
-            bottom: 228px !important;
-        }
-        @media (max-width: 900px) {
-            .spec-bar {
-                position: relative;
-                bottom: auto;
-                left: auto;
-                transform: none;
-                order: 4;
-                width: 94%;
-                max-width: 440px;
-                flex-wrap: wrap;
-                justify-content: center;
-                gap: 8px;
-                padding: 8px 10px;
-            }
-            .rotate-hint {
-                bottom: 8px !important;
-            }
-        }
-        /* ================= MOBILANPASSNING (SKÄRMAR UNDER 900px) ================= */
-        @media (max-width: 900px) {
-            body {
-                overflow-y: auto;
-                overflow-x: hidden;
-                height: auto;
-                min-height: 100vh;
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                padding-top: 10px;
-                padding-bottom: 90px; /* Plats för knapparna längst ner */
-                gap: 12px;
-            }
-
-            /* Topp-knappar (Kön & Ljud) */
-            .sound-btn {
-                position: fixed;
-                top: 10px;
-                left: 10px;
-                z-index: 50;
-                font-size: 11px;
-                padding: 5px 10px;
-            }
-            .gender-bar {
-                position: relative;
-                top: auto;
-                left: auto;
-                transform: none;
-                order: 1;
-                margin-top: 5px;
-            }
-
-            /* 3D-modellen i mitten */
-            #center-stage {
-                position: relative;
-                top: auto;
-                left: auto;
-                width: 100%;
-                height: 360px;
-                order: 2;
-            }
-            model-viewer {
-                height: 350px;
-                margin-top: 0;
-            }
-            .rotate-hint {
-                bottom: 8px;
-                font-size: 11px;
-                padding: 4px 12px;
-                width: 90%;
-                text-align: center;
-                white-space: normal;
-            }
-
-            /* Alliance & Horde fanorna */
-            .left-banners {
-                position: relative;
-                top: auto;
-                left: auto;
-                order: 3;
-                justify-content: center;
-                gap: 12px;
-                width: 100%;
-            }
-            .banner {
-                width: 155px;
-                padding: 10px 8px 22px 8px;
-            }
-            /* Lägg raserna i 2 kolumner inne i varje fana på mobilen så den inte blir så lång */
-            #alliance-races-list, #horde-races-list {
-                display: flex !important;
-                flex-direction: row !important;
-                flex-wrap: wrap;
-                justify-content: center;
-                gap: 6px !important;
-            }
-
-            /* Roll / Spec-väljaren */
-            .role-bar {
-                position: relative;
-                bottom: auto;
-                left: auto;
-                transform: none;
-                order: 4;
-                width: 94%;
-                max-width: 440px;
-                flex-wrap: wrap;
-                justify-content: center;
-                gap: 8px;
-                padding: 8px 10px;
-            }
-            .role-bar-label {
-                width: 100%;
-                text-align: center;
-                margin-right: 0;
-                margin-bottom: 2px;
-            }
-
-            /* Klass-raden (bryts snyggt på 2 rader på mobilen) */
-            .bottom-class-bar {
-                position: relative;
-                bottom: auto;
-                left: auto;
-                transform: none;
-                order: 5;
-                width: 94%;
-                max-width: 440px;
-                flex-wrap: wrap;
-                justify-content: center;
-                gap: 8px;
-                padding: 10px;
-            }
-            .class-slot {
-                width: 52px;
-            }
-
-            /* Lore & Racial Traits-rutorna längst ner när man scrollar */
-            .right-panels {
-                position: relative;
-                top: auto;
-                right: auto;
-                order: 6;
-                width: 94%;
-                max-width: 440px;
-                max-height: none;
-            }
-            .wow-box {
-                max-height: none;
-            }
-
-            /* Röda knapparna ligger alltid fast längst ner på mobilskärmen */
-            .wow-red-btn.btn-left,
-            .wow-red-btn.btn-right {
-                position: fixed;
-                bottom: 12px;
-                width: calc(50% - 16px);
-                padding: 12px 8px;
-                font-size: 13px;
-                z-index: 60;
-                text-align: center;
-            }
-            .wow-red-btn.btn-left {
-                left: 10px;
-            }
-            .wow-red-btn.btn-right {
-                right: 10px;
-            }
-
-            /* Anpassa popup-fönstret för mobil */
-            .modal-box {
-                width: 95%;
-                padding: 16px 12px;
-                max-height: 92vh;
-            }
-            .name-input {
-                width: 92%;
-            }
-            .saved-item {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 6px;
-            }
-        }
-        /* SLUMP-KNAPP FÖR ROLL (SNURR & GLÖD) */
-        .random-role-btn {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            padding: 4px 10px;
-            border: 2px dashed #ffd100;
-            border-radius: 6px;
-            background: #231d14;
-            cursor: pointer;
-            transition: all 0.15s;
-            margin-left: 6px;
-        }
-        .random-role-btn:hover {
-            background: #382e1e;
-            border-color: #fff3a1;
-            transform: scale(1.05);
-        }
-        .random-role-btn span {
-            font-size: 11px;
-            font-weight: bold;
-            color: #fff3a1;
-        }
-        @keyframes spinRoleIcon {
-            0%   { transform: rotate(0deg) scale(1); }
-            50%  { transform: rotate(540deg) scale(1.25); }
-            100% { transform: rotate(1080deg) scale(1); }
-        }
-        .spin-anim {
-            animation: spinRoleIcon 0.8s cubic-bezier(0.25, 1, 0.5, 1);
-        }
-        @keyframes roleWinnerGlow {
-            0%, 100% { box-shadow: 0 0 12px #ffd100; border-color: #fff3a1; }
-            50%      { box-shadow: 0 0 28px #00ffcc, 0 0 15px #ffffff; border-color: #00ffcc; transform: scale(1.1); }
-        }
-        .role-slot.winner-glow {
-            animation: roleWinnerGlow 0.6s ease-in-out 3;
-        }
         * { box-sizing: border-box; user-select: none; }
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -289,8 +49,8 @@
         }
         model-viewer {
             width: 100%;
-            height: 80vh;
-            margin-top: -5vh;
+            height: 78vh;
+            margin-top: -6vh;
             --poster-color: transparent;
             outline: none;
             cursor: grab;
@@ -300,7 +60,7 @@
         }
         .rotate-hint {
             position: absolute;
-            bottom: 195px;
+            bottom: 228px;
             left: 50%;
             transform: translateX(-50%);
             background: rgba(0, 0, 0, 0.75);
@@ -451,7 +211,25 @@
             color: #ffffff;
         }
 
-        /* ROLL / SPEC BAR (OVANFÖR CLASS BAR) */
+        /* SPEC BAR (OVANFÖR ROLE BAR) */
+        .spec-bar {
+            position: absolute;
+            bottom: 168px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: rgba(16, 14, 11, 0.92);
+            padding: 7px 18px;
+            border: 2px solid #6e5e43;
+            border-radius: 8px;
+            z-index: 10;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.9);
+            white-space: nowrap;
+        }
+
+        /* ROLE BAR (OVANFÖR CLASS BAR) */
         .role-bar {
             position: absolute;
             bottom: 112px;
@@ -459,13 +237,14 @@
             transform: translateX(-50%);
             display: flex;
             align-items: center;
-            gap: 14px;
+            gap: 12px;
             background: rgba(16, 14, 11, 0.92);
             padding: 7px 18px;
             border: 2px solid #6e5e43;
             border-radius: 8px;
             z-index: 10;
             box-shadow: 0 6px 20px rgba(0,0,0,0.9);
+            white-space: nowrap;
         }
         .role-bar-label {
             color: #e5c687;
@@ -511,6 +290,45 @@
             object-fit: cover;
             display: block;
             background: #222;
+        }
+
+        /* SLUMP-KNAPP FÖR SPEC/ROLL (SNURR & GLÖD) */
+        .random-role-btn {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 10px;
+            border: 2px dashed #ffd100;
+            border-radius: 6px;
+            background: #231d14;
+            cursor: pointer;
+            transition: all 0.15s;
+            margin-left: 4px;
+        }
+        .random-role-btn:hover {
+            background: #382e1e;
+            border-color: #fff3a1;
+            transform: scale(1.05);
+        }
+        .random-role-btn span {
+            font-size: 11px;
+            font-weight: bold;
+            color: #fff3a1;
+        }
+        @keyframes spinRoleIcon {
+            0%   { transform: rotate(0deg) scale(1); }
+            50%  { transform: rotate(540deg) scale(1.25); }
+            100% { transform: rotate(1080deg) scale(1); }
+        }
+        .spin-anim {
+            animation: spinRoleIcon 0.8s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+        @keyframes roleWinnerGlow {
+            0%, 100% { box-shadow: 0 0 12px #ffd100; border-color: #fff3a1; }
+            50%      { box-shadow: 0 0 28px #00ffcc, 0 0 15px #ffffff; border-color: #00ffcc; transform: scale(1.1); }
+        }
+        .role-slot.winner-glow {
+            animation: roleWinnerGlow 0.6s ease-in-out 3;
         }
 
         /* LÄNGST NER I MITTEN: CLASS BAR */
@@ -605,6 +423,48 @@
         }
         .sound-btn:hover { border-color: #ffd100; }
 
+        /* BLINKANDE "BUY CHEAP GOLD" RICKROLL-KNAPP */
+        .cheap-gold-btn {
+            position: absolute;
+            top: 54px;
+            left: 215px;
+            background: linear-gradient(180deg, #ffd700 0%, #ff8c00 100%);
+            color: #1a0f00;
+            border: 2px solid #ffffff;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 900;
+            text-decoration: none;
+            text-transform: uppercase;
+            cursor: pointer;
+            z-index: 50;
+            box-shadow: 0 0 15px #ffd700;
+            animation: goldBlink 0.75s infinite alternate;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .cheap-gold-btn:hover {
+            animation: none;
+            transform: scale(1.08);
+            background: linear-gradient(180deg, #fff066 0%, #ffa500 100%);
+            box-shadow: 0 0 25px #ffd700, 0 0 10px #ffffff;
+        }
+        @keyframes goldBlink {
+            0% {
+                transform: scale(1);
+                box-shadow: 0 0 8px #ffd700, 0 0 4px #ff0000;
+                border-color: #ffd700;
+            }
+            100% {
+                transform: scale(1.06);
+                box-shadow: 0 0 22px #ffea00, 0 0 14px #ff3300;
+                border-color: #ffffff;
+                background: linear-gradient(180deg, #ffffff 0%, #ffd700 100%);
+            }
+        }
+
         .icon-box {
             border-radius: 4px;
             background-repeat: no-repeat;
@@ -629,7 +489,7 @@
             border: 2px solid #8c7853;
             border-radius: 8px;
             width: 92%;
-            max-width: 680px;
+            max-width: 720px;
             padding: 22px;
             box-shadow: 0 10px 40px #000;
             text-align: center;
@@ -661,6 +521,7 @@
             gap: 10px;
             margin-top: 15px;
             margin-bottom: 12px;
+            flex-wrap: wrap;
         }
         .tab-btn {
             background: #252019;
@@ -685,7 +546,7 @@
             padding: 15px;
             border-radius: 6px;
             border: 1px solid #3a3225;
-            max-height: 340px;
+            max-height: 350px;
             overflow-y: auto;
         }
         .saved-list::-webkit-scrollbar { width: 5px; }
@@ -707,9 +568,6 @@
             grid-template-columns: 1fr 1fr;
             gap: 14px;
             text-align: left;
-        }
-        @media (max-width: 600px) {
-            .stats-grid { grid-template-columns: 1fr; }
         }
         .stat-card {
             background: #14110e;
@@ -748,57 +606,170 @@
             border-radius: 4px;
             transition: width 0.3s ease;
         }
-        /* BLINKANDE "BUY CHEAP GOLD" RICKROLL-KNAPP */
-        .cheap-gold-btn {
-            position: absolute;
-            top: 56px;
-            left: 215px;
-            background: linear-gradient(180deg, #ffd700 0%, #ff8c00 100%);
-            color: #1a0f00;
-            border: 2px solid #ffffff;
-            padding: 7px 14px;
-            border-radius: 6px;
-            font-size: 12px;
-            font-weight: 900;
-            text-decoration: none;
-            text-transform: uppercase;
-            cursor: pointer;
-            z-index: 50;
-            box-shadow: 0 0 15px #ffd700;
-            animation: goldBlink 0.75s infinite alternate;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-        }
-        .cheap-gold-btn:hover {
-            animation: none;
-            transform: scale(1.08);
-            background: linear-gradient(180deg, #fff066 0%, #ffa500 100%);
-            box-shadow: 0 0 25px #ffd700, 0 0 10px #ffffff;
-        }
-        @keyframes goldBlink {
-            0% {
-                transform: scale(1);
-                box-shadow: 0 0 8px #ffd700, 0 0 4px #ff0000;
-                border-color: #ffd700;
-            }
-            100% {
-                transform: scale(1.06);
-                box-shadow: 0 0 22px #ffea00, 0 0 14px #ff3300;
-                border-color: #ffffff;
-                background: linear-gradient(180deg, #ffffff 0%, #ffd700 100%);
-            }
-        }
 
-        /* Så den även sitter snyggt på mobilen */
+        /* ================= MOBILANPASSNING (SKÄRMAR UNDER 900px) ================= */
         @media (max-width: 900px) {
+            body {
+                overflow-y: auto;
+                overflow-x: hidden;
+                height: auto;
+                min-height: 100vh;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                padding-top: 46px;
+                padding-bottom: 90px;
+                gap: 12px;
+            }
+            .sound-btn {
+                position: fixed;
+                top: 8px;
+                left: 8px;
+                z-index: 60;
+                font-size: 11px;
+                padding: 5px 10px;
+            }
             .cheap-gold-btn {
                 position: fixed;
-                top: 10px;
-                right: 10px;
+                top: 8px;
+                right: 8px;
                 left: auto;
                 font-size: 10px;
                 padding: 5px 10px;
+                z-index: 60;
+            }
+            .gender-bar {
+                position: relative;
+                top: auto;
+                left: auto;
+                transform: none;
+                order: 1;
+            }
+            #center-stage {
+                position: relative;
+                top: auto;
+                left: auto;
+                width: 100%;
+                height: 340px;
+                order: 2;
+            }
+            model-viewer {
+                height: 330px;
+                margin-top: 0;
+            }
+            .rotate-hint {
+                bottom: 8px !important;
+                font-size: 11px;
+                padding: 4px 12px;
+                width: 90%;
+                text-align: center;
+                white-space: normal;
+            }
+            .left-banners {
+                position: relative;
+                top: auto;
+                left: auto;
+                order: 3;
+                justify-content: center;
+                gap: 12px;
+                width: 100%;
+            }
+            .banner {
+                width: 155px;
+                padding: 10px 8px 22px 8px;
+            }
+            #alliance-races-list, #horde-races-list {
+                display: flex !important;
+                flex-direction: row !important;
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 6px !important;
+            }
+            .spec-bar {
+                position: relative;
+                bottom: auto;
+                left: auto;
+                transform: none;
+                order: 4;
+                width: 94%;
+                max-width: 440px;
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 8px;
+                padding: 8px 10px;
+                white-space: normal;
+            }
+            .role-bar {
+                position: relative;
+                bottom: auto;
+                left: auto;
+                transform: none;
+                order: 5;
+                width: 94%;
+                max-width: 440px;
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 8px;
+                padding: 8px 10px;
+                white-space: normal;
+            }
+            .role-bar-label {
+                width: 100%;
+                text-align: center;
+                margin-right: 0;
+                margin-bottom: 2px;
+            }
+            .bottom-class-bar {
+                position: relative;
+                bottom: auto;
+                left: auto;
+                transform: none;
+                order: 6;
+                width: 94%;
+                max-width: 440px;
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 8px;
+                padding: 10px;
+            }
+            .class-slot {
+                width: 52px;
+            }
+            .right-panels {
+                position: relative;
+                top: auto;
+                right: auto;
+                order: 7;
+                width: 94%;
+                max-width: 440px;
+                max-height: none;
+            }
+            .wow-box {
+                max-height: none;
+            }
+            .wow-red-btn.btn-left,
+            .wow-red-btn.btn-right {
+                position: fixed;
+                bottom: 10px;
+                width: calc(50% - 14px);
+                padding: 12px 6px;
+                font-size: 13px;
+                z-index: 60;
+                text-align: center;
+            }
+            .wow-red-btn.btn-left { left: 8px; }
+            .wow-red-btn.btn-right { right: 8px; }
+            .stats-grid { grid-template-columns: 1fr; }
+            .modal-box {
+                width: 95%;
+                padding: 16px 12px;
+                max-height: 92vh;
+            }
+            .name-input { width: 92%; }
+            .saved-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 6px;
             }
         }
     </style>
@@ -811,10 +782,10 @@
 </div>
 <div class="video-overlay"></div>
 
-<!-- LJUDKNAPP -->
+<!-- LJUDKNAPP & RICKROLL GULD-KNAPP -->
 <button id="music-btn" class="sound-btn" onclick="toggleSound(event)">🔇 Enable Sound</button>
-    <a href="https://www.youtube.com/watch?v=dQw4w9WgXcQ" target="_blank" class="cheap-gold-btn">
-    🪙 Buy Cheap Gold, 25% off original price! Use Code: WoWForever
+<a href="https://www.youtube.com/watch?v=dQw4w9WgXcQ" target="_blank" class="cheap-gold-btn">
+    🪙 Buy Cheap Gold, 25% off original price!
 </a>
 
 <!-- HÖGST UPP: KÖNSVAL -->
@@ -871,9 +842,10 @@
     </div>
 </div>
 
-<!-- NERE I MITTEN (OVANFÖR KLASSER): SPEC / ROLE BAR -->
-<!-- NERE I MITTEN (OVANFÖR ROLE BAR): SPEC BAR -->
+<!-- NERE I MITTEN: SPEC BAR (OVANFÖR ROLE BAR) -->
 <div class="spec-bar" id="spec-bar"></div>
+
+<!-- NERE I MITTEN: ROLE BAR (OVANFÖR CLASS BAR) -->
 <div class="role-bar" id="role-bar"></div>
 
 <!-- LÄNGST NER I MITTEN: 9 KLASSER -->
@@ -889,7 +861,7 @@
         <div id="save-section">
             <h2>Name Your Character</h2>
             <p id="modal-summary" style="color:#e5c687; margin-bottom:12px; font-weight:bold;"></p>
-            <div style="display:flex; justify-content:center; align-items:center; gap:12px; margin-bottom:16px;" id="modal-preview-icons"></div>
+            <div style="display:flex; justify-content:center; align-items:center; gap:10px; margin-bottom:16px;" id="modal-preview-icons"></div>
             <input type="text" id="player-name" class="name-input" placeholder="Enter character / player name..." />
             <br>
             <button id="submit-btn" class="wow-red-btn" style="position:static; padding:10px 30px;" onclick="submitPoll()">Save Character</button>
@@ -925,10 +897,10 @@
     // Din Hugging Face bas-URL
     const HF_BASE_URL = "https://huggingface.co/datasets/fatto92/wow_models/resolve/main";
 
-    // Reservmodell
+    // Reservmodell om en 3D-fil skulle saknas
     const FALLBACK_3D_MODEL = "https://modelviewer.dev/shared-assets/models/RobotExpressive.glb";
 
-    // Mapp- och filnamnskonfiguration för 3D-modellerna
+    // Mapp- och filnamnskonfiguration för 3D-modellerna på Hugging Face
     const RACE_CONFIG = {
         "Human":               { folder: "human",              filePrefix: "human" },
         "Dwarf":               { folder: "dwarf",              filePrefix: "dwarf" },
@@ -976,7 +948,7 @@
         };
     }
 
-    // ================= DATA: REGLER FÖR RASER, KLASSER & ROLLER (SPECS) =================
+    // ================= DATA: RASER, KLASSER, SPECS & ROLLER =================
     const ALL_CLASSES = ["Warrior", "Hunter", "Mage", "Rogue", "Priest", "Warlock", "Paladin", "Druid", "Shaman"];
     const ALL_ROLES = ["Tank", "Healer", "DPS"];
 
@@ -998,84 +970,84 @@
         "High Order Skyborne": ["Warrior", "Hunter", "Mage", "Rogue", "Druid"]
     };
 
-    // Dina regler för vilka roller (Tank / Healer / DPS) varje klass kan välja:
+    // Tillåtna roller per klass
     const rolesByClass = {
-        // Alla specs per klass och vilken Role de automatiskt väljer:
-    const specsByClass = {
-        "Warrior": [
-            { name: "Arms",         role: "DPS",    icon: "Arms.png" },
-            { name: "Fury",         role: "DPS",    icon: "Fury.png" },
-            { name: "Protection",   role: "Tank",   icon: "Protection.png" }
-        ],
-        "Hunter": [
-            { name: "Beast Mastery", role: "DPS",   icon: "Beast_Mastery.png" },
-            { name: "Marksmanship",  role: "DPS",   icon: "Marksmanship.png" },
-            { name: "Survival",      role: "DPS",   icon: "Survival.png" }
-        ],
-        "Mage": [
-            { name: "Arcane",       role: "DPS",    icon: "Arcane.png" },
-            { name: "Fire",         role: "DPS",    icon: "Fire.png" },
-            { name: "Frost",        role: "DPS",    icon: "Frost.png" }
-        ],
-        "Rogue": [
-            { name: "Assassination", role: "DPS",   icon: "Assassination.png" },
-            { name: "Combat",        role: "DPS",   icon: "Combat.png" },
-            { name: "Subtlety",      role: "DPS",   icon: "Subtlety.png" }
-        ],
-        "Priest": [
-            { name: "Discipline",   role: "Healer", icon: "Discipline.png" },
-            { name: "Holy",         role: "Healer", icon: "Holy.png" },
-            { name: "Shadow",       role: "DPS",    icon: "Shadow.png" }
-        ],
-        "Warlock": [
-            { name: "Affliction",   role: "DPS",    icon: "Affliction.png" },
-            { name: "Demonology",   role: "DPS",    icon: "Demonology.png" },
-            { name: "Destruction",  role: "DPS",    icon: "Destruction.png" }
-        ],
-        "Paladin": [
-            { name: "Holy",         role: "Healer", icon: "Holy.png" },
-            { name: "Protection",   role: "Tank",   icon: "Protection.png" },
-            { name: "Retribution",  role: "DPS",    icon: "Retribution.png" }
-        ],
-        "Druid": [
-            { name: "Balance",      role: "DPS",    icon: "Balance.png" },
-            { name: "Feral",        role: "Tank",   icon: "Feral.png" },
-            { name: "Restoration",  role: "Healer", icon: "Restoration.png" }
-        ],
-        "Shaman": [
-            { name: "Elemental",    role: "DPS",    icon: "Elemental.png" },
-            { name: "Enhancement",  role: "DPS",    icon: "Enhancement.png" },
-            { name: "Restoration",  role: "Healer", icon: "Restoration.png" }
-        ]
-    };
-
-    function createSpecIconHTML(specName, charClass = currentSelection.charClass, size = 28) {
-        const specs = specsByClass[charClass] || [];
-        const found = specs.find(s => s.name === specName);
-        const file = found ? found.icon : `${specName.replace(/\s+/g, '_')}.png`;
-        return `<img src="${file}" alt="${specName}" title="${specName}" class="role-icon-img" style="width:${size}px; height:${size}px;" onerror="this.style.opacity='0.2'">`;
-    }
         "Warlock": ["DPS"],
         "Mage":    ["DPS"],
         "Rogue":   ["DPS"],
         "Hunter":  ["DPS"],
         "Priest":  ["Healer", "DPS"],
         "Shaman":  ["Healer", "DPS"],
-        "Warrior": ["Tank", "DPS"],
+        "Warrior": ["Tank", "Healer", "DPS"],
         "Paladin": ["Tank", "Healer", "DPS"],
         "Druid":   ["Tank", "Healer", "DPS"]
     };
 
-    // Bildfiler för rollerna (Tank.png, Healer.png, DPS.png)
+    // Alla 27 specs med de exakta bildfilnamnen du bad om
+    const specsByClass = {
+        "Warrior": [
+            { name: "Arms",          role: "DPS",    icon: "Arms.png" },
+            { name: "Fury",          role: "DPS",    icon: "Fury.png" },
+            { name: "Protection",    role: "Tank",   icon: "Protection_Warrior.png" }
+        ],
+        "Hunter": [
+            { name: "Beast Mastery", role: "DPS",    icon: "Beast_Mastery.png" },
+            { name: "Marksmanship",  role: "DPS",    icon: "Marksmanship.png" },
+            { name: "Survival",      role: "DPS",    icon: "Survival.png" }
+        ],
+        "Mage": [
+            { name: "Arcane",        role: "DPS",    icon: "Arcane.png" },
+            { name: "Fire",          role: "DPS",    icon: "Fire.png" },
+            { name: "Frost",         role: "DPS",    icon: "Frost.png" }
+        ],
+        "Rogue": [
+            { name: "Assassination", role: "DPS",    icon: "Assassination.png" },
+            { name: "Combat",        role: "DPS",    icon: "Combat.png" },
+            { name: "Subtlety",      role: "DPS",    icon: "Subtlety.png" }
+        ],
+        "Priest": [
+            { name: "Discipline",    role: "Healer", icon: "Discipline.png" },
+            { name: "Holy",          role: "Healer", icon: "Holy_Priest.png" },
+            { name: "Shadow",        role: "DPS",    icon: "Shadow.png" }
+        ],
+        "Warlock": [
+            { name: "Affliction",    role: "DPS",    icon: "Affliction.png" },
+            { name: "Demonology",    role: "DPS",    icon: "Demonology.png" },
+            { name: "Destruction",   role: "DPS",    icon: "Destruction.png" }
+        ],
+        "Paladin": [
+            { name: "Holy",          role: "Healer", icon: "Holy_Paladin.png" },
+            { name: "Protection",    role: "Tank",   icon: "Protection_Paladin.png" },
+            { name: "Retribution",   role: "DPS",    icon: "Retribution.png" }
+        ],
+        "Druid": [
+            { name: "Balance",       role: "DPS",    icon: "Balance.png" },
+            { name: "Feral",         role: "Tank",   icon: "Feral.png" },
+            { name: "Restoration",   role: "Healer", icon: "Restoration_Druid.png" }
+        ],
+        "Shaman": [
+            { name: "Elemental",     role: "DPS",    icon: "Elemental.png" },
+            { name: "Enhancement",   role: "DPS",    icon: "Enhancement.png" },
+            { name: "Restoration",   role: "Healer", icon: "Restoration_Shaman.png" }
+        ]
+    };
+
     const ROLE_ICONS = {
         "Tank": "Tank.png",
         "Healer": "Healer.png",
         "DPS": "DPS.png"
     };
 
-    function createRoleIconHTML(role, size = 30) {
+    function createRoleIconHTML(role, size = 28) {
         const file = ROLE_ICONS[role] || "DPS.png";
         return `<img src="${file}" alt="${role}" title="${role}" class="role-icon-img" style="width:${size}px; height:${size}px;" onerror="this.style.opacity='0.2'">`;
+    }
+
+    function createSpecIconHTML(specName, charClass = currentSelection.charClass, size = 28) {
+        const specs = specsByClass[charClass] || [];
+        const found = specs.find(s => s.name === specName);
+        const file = found ? found.icon : `${specName.replace(/\s+/g, '_')}.png`;
+        return `<img src="${file}" alt="${specName}" title="${specName}" class="role-icon-img" style="width:${size}px; height:${size}px;" onerror="this.style.opacity='0.2'">`;
     }
 
     const FACTION_LORE = {
@@ -1220,13 +1192,13 @@
         faction: "Horde",
         race: "Troll",
         charClass: "Shaman",
+        spec: "Restoration",
         role: "Healer",
         gender: "Male",
         name: ""
     };
 
-    // Lägg till standard-spec i currentSelection
-    currentSelection.spec = "Restoration";
+    let isRollingRole = false;
 
     function initScreen() {
         document.getElementById('logo-alliance').innerHTML = createSpriteHTML("Alliance", 52);
@@ -1239,11 +1211,54 @@
         update3DModel();
     }
 
+    function renderBanners() {
+        const aList = document.getElementById('alliance-races-list');
+        const hList = document.getElementById('horde-races-list');
+        aList.innerHTML = '';
+        hList.innerHTML = '';
+
+        racesByFaction["Alliance"].forEach(race => {
+            const div = document.createElement('div');
+            div.className = `race-slot ${currentSelection.race === race ? 'selected' : ''}`;
+            div.onclick = () => selectRace("Alliance", race);
+            div.innerHTML = createSpriteHTML(race, 56);
+            aList.appendChild(div);
+        });
+
+        racesByFaction["Horde"].forEach(race => {
+            const div = document.createElement('div');
+            div.className = `race-slot ${currentSelection.race === race ? 'selected' : ''}`;
+            div.onclick = () => selectRace("Horde", race);
+            div.innerHTML = createSpriteHTML(race, 56);
+            hList.appendChild(div);
+        });
+    }
+
+    function renderClassBar() {
+        const bar = document.getElementById('class-bar');
+        bar.innerHTML = '';
+        const allowedClasses = classesByRace[currentSelection.race] || [];
+
+        ALL_CLASSES.forEach(cls => {
+            const isAllowed = allowedClasses.includes(cls);
+            const isSelected = currentSelection.charClass === cls;
+            const slot = document.createElement('div');
+            slot.className = `class-slot ${!isAllowed ? 'disabled' : ''} ${isSelected ? 'selected' : ''}`;
+            if (isAllowed) {
+                slot.onclick = () => selectClass(cls);
+            }
+            slot.innerHTML = `
+                <div class="class-icon-wrap">${createSpriteHTML(cls, 46)}</div>
+                <span>${cls}</span>
+            `;
+            bar.appendChild(slot);
+        });
+    }
+
     function renderSpecBar(highlightWinner = false) {
         const bar = document.getElementById('spec-bar');
         const specs = specsByClass[currentSelection.charClass] || [];
 
-        // Om nuvarande spec inte hör till klassen, välj första specen och sätt dess Role automatiskt
         if (!specs.some(s => s.name === currentSelection.spec)) {
             currentSelection.spec = specs[0].name;
             currentSelection.role = specs[0].role;
@@ -1266,12 +1281,10 @@
 
     function selectSpec(specName, autoRole) {
         currentSelection.spec = specName;
-        currentSelection.role = autoRole; // Väljer automatiskt rätt Role!
+        currentSelection.role = autoRole; // Väljer automatiskt rätt Role när man väljer Spec
         renderSpecBar();
-        renderRoleBar(true); // Liten glöd på rollen som valdes automatiskt
+        renderRoleBar(true);
     }
-
-    let isRollingRole = false;
 
     function renderRoleBar(highlightWinner = false) {
         const bar = document.getElementById('role-bar');
@@ -1298,6 +1311,7 @@
             bar.appendChild(btn);
         });
 
+        // "Help me!" slump-knapp
         const randBtn = document.createElement('div');
         randBtn.className = 'random-role-btn';
         randBtn.title = "Can't choose spec/role? Click to roll!";
@@ -1323,7 +1337,6 @@
         const specs = specsByClass[currentSelection.charClass] || [];
 
         setTimeout(() => {
-            // Slumpar en av klassens specs och sätter dess Role automatiskt!
             const randomSpec = specs[Math.floor(Math.random() * specs.length)];
             currentSelection.spec = randomSpec.name;
             currentSelection.role = randomSpec.role;
@@ -1339,6 +1352,9 @@
         const allowed = classesByRace[race];
         if (!allowed.includes(currentSelection.charClass)) {
             currentSelection.charClass = allowed[0];
+            const specs = specsByClass[currentSelection.charClass] || [];
+            currentSelection.spec = specs[0].name;
+            currentSelection.role = specs[0].role;
         }
         renderBanners();
         renderClassBar();
@@ -1398,12 +1414,13 @@
         document.getElementById('save-section').style.display = (mode === 'save') ? 'block' : 'none';
         if (mode === 'save') {
             document.getElementById('modal-summary').textContent =
-                `${currentSelection.faction} — ${currentSelection.gender} ${currentSelection.race} ${currentSelection.charClass} (${currentSelection.role})`;
+                `${currentSelection.faction} — ${currentSelection.gender} ${currentSelection.race} | ${currentSelection.spec} ${currentSelection.charClass} (${currentSelection.role})`;
             document.getElementById('modal-preview-icons').innerHTML = `
-                ${createSpriteHTML(currentSelection.faction, 50)}
-                ${createSpriteHTML(currentSelection.race, 50, currentSelection.gender)}
-                ${createSpriteHTML(currentSelection.charClass, 50)}
-                ${createRoleIconHTML(currentSelection.role, 46)}
+                ${createSpriteHTML(currentSelection.faction, 48)}
+                ${createSpriteHTML(currentSelection.race, 48, currentSelection.gender)}
+                ${createSpriteHTML(currentSelection.charClass, 48)}
+                ${createSpecIconHTML(currentSelection.spec, currentSelection.charClass, 44)}
+                ${createRoleIconHTML(currentSelection.role, 44)}
             `;
         }
         loadEntriesFromInternet();
@@ -1458,25 +1475,25 @@
             }
             const entries = Object.values(data).reverse();
 
-            // Renderar listan med sparade karaktärer
             listContainer.innerHTML = entries.map(item => {
                 const roleName = item.role || "DPS";
+                const specName = item.spec || "";
                 return `
                     <div class="saved-item">
                         <div>
-                            <strong style="color:#ffd100;">${escapeHtml(item.name)}</strong> — ${item.faction} | ${item.gender ? item.gender + ' ' : ''}${item.race} ${item.charClass} <span style="color:#c9b182;">(${roleName})</span>
+                            <strong style="color:#ffd100;">${escapeHtml(item.name)}</strong> — ${item.faction} | ${item.gender ? item.gender + ' ' : ''}${item.race} | ${specName ? specName + ' ' : ''}${item.charClass} <span style="color:#c9b182;">(${roleName})</span>
                         </div>
                         <div class="saved-icons">
                             ${createSpriteHTML(item.faction, 28)}
                             ${createSpriteHTML(item.race, 28, item.gender || 'Male')}
                             ${createSpriteHTML(item.charClass, 28)}
+                            ${specName ? createSpecIconHTML(specName, item.charClass, 26) : ''}
                             ${createRoleIconHTML(roleName, 26)}
                         </div>
                     </div>
                 `;
             }).join('');
 
-            // Renderar procent-statistiken
             renderStatistics(entries);
         } catch (err) {
             listContainer.innerHTML = '<p style="color:#ff5555;">Could not load list.</p>';
@@ -1497,7 +1514,6 @@
                 if (val && counts[val] !== undefined) counts[val]++;
             });
 
-            // Sortera så att de mest valda ligger överst
             const sortedKeys = [...keys].sort((a, b) => counts[b] - counts[a]);
 
             const rowsHtml = sortedKeys.map(k => {
@@ -1529,7 +1545,7 @@
         statsContainer.innerHTML = `
             <div class="stats-grid">
                 ${buildCategoryHtml("Factions", ["Alliance", "Horde"], "faction")}
-                ${buildCategoryHtml("Roles / Specs", ["Tank", "Healer", "DPS"], "role", "DPS")}
+                ${buildCategoryHtml("Roles", ["Tank", "Healer", "DPS"], "role", "DPS")}
                 ${buildCategoryHtml("Classes", ALL_CLASSES, "charClass")}
                 ${buildCategoryHtml("Races", allRaces, "race")}
             </div>
