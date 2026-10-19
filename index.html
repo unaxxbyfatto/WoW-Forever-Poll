@@ -1333,18 +1333,6 @@
         bar.appendChild(randBtn);
     }
 
-        // "Help me!" slump-knapp
-        const randBtn = document.createElement('div');
-        randBtn.className = 'random-role-btn';
-        randBtn.title = "Can't choose spec/role? Click to roll!";
-        randBtn.onclick = () => rollRandomRole();
-        randBtn.innerHTML = `
-            <img id="random-role-img" src="Cant_choose_role_help_me.png" alt="?" class="role-icon-img" style="width:28px; height:28px;" onerror="this.style.opacity='0.3'">
-            <span>Help me!</span>
-        `;
-        bar.appendChild(randBtn);
-    }
-
     function rollRandomRole() {
         if (isRollingRole) return;
         isRollingRole = true;
